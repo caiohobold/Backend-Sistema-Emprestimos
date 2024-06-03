@@ -16,9 +16,9 @@ namespace EmprestimosAPI.Services
             _pessoaRepository = pessoaRepository;
         }
 
-        public async Task<IEnumerable<PessoaReadDTO>> GetAllPessoasAsync()
+        public async Task<IEnumerable<PessoaReadDTO>> GetAllPessoasAsync(int pageNumber, int pageSize)
         {
-            var pessoas = await _pessoaRepository.GetAllPessoasAsync();
+            var pessoas = await _pessoaRepository.GetAllPessoasAsync(pageNumber, pageSize);
             return pessoas.Select(a => new PessoaReadDTO
             {
                 IdPessoa = a.IdPessoa,

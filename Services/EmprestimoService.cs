@@ -19,9 +19,9 @@ namespace EmprestimosAPI.Services
         }
 
 
-        public async Task<IEnumerable<EmprestimoReadDTO>> GetAllEmp()
+        public async Task<IEnumerable<EmprestimoReadDTO>> GetAllEmp(int pageNumber, int pageSize)
         {
-            var emprestimos = await _emprestimoRepository.GetAllEmp();
+            var emprestimos = await _emprestimoRepository.GetAllEmp(pageNumber, pageSize);
             return emprestimos.Select(e => new EmprestimoReadDTO
             {
                 Id = e.Id,
@@ -49,9 +49,9 @@ namespace EmprestimosAPI.Services
             };
         }
 
-        public async Task<IEnumerable<EmprestimoReadDTO>> GetActiveEmp()
+        public async Task<IEnumerable<EmprestimoReadDTO>> GetActiveEmp(int pageNumber, int pageSize)
         {
-            var emprestimos = await _emprestimoRepository.GetActiveEmp();
+            var emprestimos = await _emprestimoRepository.GetActiveEmp(pageNumber, pageSize);
             return emprestimos.Select(e => new EmprestimoReadDTO
             {
                 Id = e.Id,

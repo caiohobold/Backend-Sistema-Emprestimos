@@ -1,5 +1,6 @@
 ﻿using EmprestimosAPI.Data;
 using EmprestimosAPI.DTO.Emprestimo;
+using EmprestimosAPI.Helpers;
 using EmprestimosAPI.Interfaces.RepositoriesInterfaces;
 using EmprestimosAPI.Models;
 using Microsoft.EntityFrameworkCore;
@@ -16,13 +17,21 @@ namespace EmprestimosAPI.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Emprestimo>> GetAllEmp()
+        public async Task<PagedList<Emprestimo>> GetAllEmp(int pageNumber, int pageSize)
         {
-            return await _context.Emprestimos
+            var query = _context.Emprestimos
                 .Include(e => e.Pessoa)
                 .Include(e => e.Usuario)
-                .Include(e => e.Equipamento)
+                .Include(e => e.Equipamento);
+
+            var count = await query.CountAsync();
+
+            var items = await query.Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            return new PagedList<Emprestimo>(items, count, pageNumber, pageSize);
+
         }
 
         public async Task<Emprestimo> GetEmpById(int id)
@@ -36,14 +45,20 @@ namespace EmprestimosAPI.Repositories
             return emprestimo;
         }
 
-        public async Task<IEnumerable<Emprestimo>> GetActiveEmp()
+        public async Task<PagedList<Emprestimo>> GetActiveEmp(int pageNumber, int pageSize)
         {
-            return await _context.Emprestimos
+            var query = _context.Emprestimos
                 .Include(e => e.Pessoa)
                 .Include(e => e.Usuario)
                 .Include(e => e.Equipamento)
-                .Where(e => e.Status == 0)
+                .Where(e => e.Status == 0);
+
+            var count = await query.CountAsync();
+            var items = await query.Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            return new PagedList<Emprestimo>(items, count, pageNumber, pageSize);
         }
 
         public async Task<Emprestimo> AddEmp(Emprestimo emprestimo)

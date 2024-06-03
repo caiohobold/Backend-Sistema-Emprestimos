@@ -3,6 +3,7 @@
     public class UsuarioReadDTO
     {
         public int IdUsuario { get; set; }
+        public string EmailPessoal { get; set; }
         public string NomeCompleto { get; set; }
         public string NumeroTelefone { get; set; }
         public string SenhaHash { get; set; }

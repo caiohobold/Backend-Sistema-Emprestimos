@@ -9,6 +9,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using System.Net.NetworkInformation;
 using Microsoft.IdentityModel.Tokens;
+using System.Runtime;
+using System.Text;
+using EmprestimosAPI.Interfaces.Account;
+using EmprestimosAPI.Token;
 
 namespace EmprestimosAPI
 {
@@ -33,11 +37,19 @@ namespace EmprestimosAPI
             builder.Services.AddScoped<IEmprestimoRepository, EmprestimoRepository>();
             builder.Services.AddScoped<IEmprestimoService, EmprestimoService>();
             builder.Services.AddScoped<HashingService>();
+            builder.Services.AddScoped<IAuthenticate, AuthenticateService>();
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigin",
+                    builder => builder.WithOrigins("http://localhost:3000")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod());
+            });
 
             builder.Services.AddControllers();
 
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddInfrastructureSwagger();
 
             builder.Logging.ClearProviders();
             builder.Logging.AddConsole();
@@ -45,6 +57,28 @@ namespace EmprestimosAPI
             builder.Services.AddDbContext<DbEmprestimosContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DbEmprestimosContext")));
 
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }
+            ).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+
+                    ValidIssuer = builder.Configuration["jwt:issuer"],
+                    ValidAudience = builder.Configuration["jwt:audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(builder.Configuration["jwt:secretKey"])),
+                    ClockSkew = TimeSpan.Zero
+                };
+            }
+            );
 
             var app = builder.Build();
 
@@ -57,6 +91,8 @@ namespace EmprestimosAPI
 
             app.UseHttpsRedirection();
 
+            app.UseCors("AllowSpecificOrigin");
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

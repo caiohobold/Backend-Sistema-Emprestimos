@@ -17,9 +17,10 @@ namespace EmprestimosAPI.Controller
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CategoriaReadDTO>>> Get()
+        public async Task<ActionResult<IEnumerable<CategoriaReadDTO>>> Get(int pageNumber, int pageSize)
         {
-            return Ok(await _categoriaService.GetAllAsync());
+            var categorias = await _categoriaService.GetAllAsync(pageNumber, pageSize);
+            return Ok(categorias);
         }
 
         [HttpGet("{id}")]

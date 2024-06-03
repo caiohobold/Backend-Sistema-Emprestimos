@@ -1,10 +1,11 @@
-﻿using EmprestimosAPI.Models;
+﻿using EmprestimosAPI.Helpers;
+using EmprestimosAPI.Models;
 
 namespace EmprestimosAPI.Interfaces.RepositoriesInterfaces
 {
     public interface IAssociacaoRepository
     {
-        Task<IEnumerable<Associacao>> GetAllAssocAsync();
+        Task<PagedList<Associacao>> GetAllAssocAsync(int pageNumber, int pageSize);
         Task<Associacao> GetAssocById(int id);
         Task<Associacao> AddAssoc(Associacao associacao);
         Task UpdateAssoc(Associacao associacao);

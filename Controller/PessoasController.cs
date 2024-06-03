@@ -1,5 +1,6 @@
 ﻿using EmprestimosAPI.DTO.Pessoa;
 using EmprestimosAPI.Interfaces.ServicesInterfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,9 +18,10 @@ namespace EmprestimosAPI.Controller
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PessoaReadDTO>>> Get()
+        public async Task<ActionResult<IEnumerable<PessoaReadDTO>>> Get(int pageNumber, int pageSize)
         {
-            return Ok(await _pessoaService.GetAllPessoasAsync());
+            var pessoas = await _pessoaService.GetAllPessoasAsync(pageNumber, pageSize);
+            return Ok(pessoas);
         }
 
         [HttpGet("{id}")]
@@ -32,6 +34,7 @@ namespace EmprestimosAPI.Controller
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<PessoaReadDTO>> Post(PessoaCreateDTO pessoaDTO)
         {
             var pessoaReadDto = await _pessoaService.AddPessoaAsync(pessoaDTO);

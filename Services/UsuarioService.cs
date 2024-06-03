@@ -23,13 +23,14 @@ namespace EmprestimosAPI.Services
             _hashingService = hashingService;
         }
 
-        public async Task<IEnumerable<UsuarioReadDTO>> GetAllUsers()
+        public async Task<IEnumerable<UsuarioReadDTO>> GetAllUsers(int pageNumber, int pageSize)
         {
-            var usuarios = await _usuarioRepository.GetAllUsers();
+            var usuarios = await _usuarioRepository.GetAllUsers(pageNumber, pageSize);
             return usuarios.Select(a => new UsuarioReadDTO
             {
                 IdUsuario = a.IdUsuario,
                 NomeCompleto = a.NomeCompleto,
+                EmailPessoal = a.EmailPessoal,
                 NumeroTelefone = a.NumeroTelefone,
                 SenhaHash = a.SenhaHash,
                 AssociacaoNomeFantasia = a.Associacao?.NomeFantasia,
@@ -46,6 +47,7 @@ namespace EmprestimosAPI.Services
             {
                 IdUsuario = usuario.IdUsuario,
                 NomeCompleto = usuario.NomeCompleto,
+                EmailPessoal = usuario.EmailPessoal,
                 NumeroTelefone = usuario.NumeroTelefone,
                 SenhaHash = usuario.SenhaHash,
                 AssociacaoNomeFantasia = usuario.Associacao.NomeFantasia,
@@ -81,6 +83,7 @@ namespace EmprestimosAPI.Services
                 IdUsuario = newUsuario.IdUsuario,
                 NomeCompleto = newUsuario.NomeCompleto,
                 NumeroTelefone = newUsuario.NumeroTelefone,
+                EmailPessoal = newUsuario.EmailPessoal,
                 SenhaHash = newUsuario.SenhaHash,
                 AssociacaoNomeFantasia = newUsuario.Associacao?.NomeFantasia ?? "Desconhecida",
                 IdAssociacao = newUsuario.Associacao?.IdAssociacao ?? 0

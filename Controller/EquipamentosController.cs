@@ -17,15 +17,16 @@ namespace EmprestimosAPI.Controller
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EquipamentoReadDTO>>> GetAll()
+        public async Task<ActionResult<IEnumerable<EquipamentoReadDTO>>> GetAll(int pageNumber, int pageSize)
         {
-            return Ok(await _equipamentoService.GetAllEquip());
+            var equipamentos = await _equipamentoService.GetAllEquip(pageNumber, pageSize);
+            return Ok(equipamentos);
         }
 
         [HttpGet("available")]
-        public async Task<ActionResult> GetOnlyAvailable()
+        public async Task<ActionResult> GetOnlyAvailable(int pageNumber, int pageSize)
         {
-            var equipamentos = await _equipamentoService.GetAllAvailableEquip();
+            var equipamentos = await _equipamentoService.GetAllAvailableEquip(pageNumber, pageSize);
             if(equipamentos == null)
             {
                 return NotFound("Nenhum equipamento disponível encontrado.");

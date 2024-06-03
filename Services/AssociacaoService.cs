@@ -1,4 +1,6 @@
-﻿using EmprestimosAPI.DTO.Associacao;
+﻿using EmprestimosAPI.Data;
+using EmprestimosAPI.DTO.Associacao;
+using EmprestimosAPI.Interfaces.Account;
 using EmprestimosAPI.Interfaces.RepositoriesInterfaces;
 using EmprestimosAPI.Interfaces.Services;
 using EmprestimosAPI.Models;
@@ -11,20 +13,25 @@ namespace EmprestimosAPI.Services
     public class AssociacaoService : IAssociacaoService
     {
         private readonly IAssociacaoRepository _repository;
+        private readonly DbEmprestimosContext _context;
+        private readonly HashingService _hashingService;
 
-        public AssociacaoService(IAssociacaoRepository repository)
+        public AssociacaoService(IAssociacaoRepository repository, DbEmprestimosContext context, HashingService hashingService)
         {
             _repository = repository;
+            _context = context;
+            _hashingService = hashingService;
         }
 
-        public async Task<IEnumerable<AssociacaoReadDTO>> GetAllAsync()
+        public async Task<IEnumerable<AssociacaoReadDTO>> GetAllAsync(int pageNumber, int pageSize)
         {
-            var associacoes = await _repository.GetAllAssocAsync();
+            var associacoes = await _repository.GetAllAssocAsync(pageNumber, pageSize);
             return associacoes.Select(a => new AssociacaoReadDTO
             { 
                 IdAssociacao = a.IdAssociacao,
                 RazaoSocial = a.RazaoSocial,
-                NomeFantasia = a.NomeFantasia
+                NomeFantasia = a.NomeFantasia,
+                EmailProfissional = a.EmailProfissional
             }).ToList();
         }
 
@@ -36,7 +43,8 @@ namespace EmprestimosAPI.Services
             {
                 IdAssociacao = associacao.IdAssociacao,
                 RazaoSocial = associacao.RazaoSocial,
-                NomeFantasia = associacao.NomeFantasia
+                NomeFantasia = associacao.NomeFantasia,
+                EmailProfissional = associacao.EmailProfissional
             };
         }
 
@@ -53,13 +61,16 @@ namespace EmprestimosAPI.Services
                 Senha = associacaoDTO.Senha
             };
 
+            associacao.Senha = _hashingService.HashAssocPassword(associacao, associacaoDTO.Senha);
+
             var newAssociacao = await _repository.AddAssoc(associacao);
 
             return new AssociacaoReadDTO
             {
                 IdAssociacao = newAssociacao.IdAssociacao,
                 RazaoSocial = newAssociacao.RazaoSocial,
-                NomeFantasia = newAssociacao.NomeFantasia
+                NomeFantasia = newAssociacao.NomeFantasia,
+                EmailProfissional = newAssociacao.EmailProfissional
             };
         }
 
@@ -74,7 +85,10 @@ namespace EmprestimosAPI.Services
             associacao.NomeFantasia = associacaoDTO.NomeFantasia;
             associacao.NumeroTelefone = associacaoDTO.Numero_Telefone;
             associacao.EmailProfissional = associacaoDTO.EmailProfissional;
-            associacao.Senha = associacaoDTO.Senha;
+            if (!string.IsNullOrEmpty(associacaoDTO.Senha))
+            {
+                associacao.Senha = _hashingService.HashAssocPassword(associacao, associacaoDTO.Senha);
+            }
             associacao.Endereco = associacaoDTO.Endereco;
 
             await _repository.UpdateAssoc(associacao);

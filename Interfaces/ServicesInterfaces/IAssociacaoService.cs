@@ -6,7 +6,7 @@ namespace EmprestimosAPI.Interfaces.Services
 {
     public interface IAssociacaoService
     {
-        Task<IEnumerable<AssociacaoReadDTO>> GetAllAsync();
+        Task<IEnumerable<AssociacaoReadDTO>> GetAllAsync(int pageNumber, int pageSize);
         Task<AssociacaoReadDTO> GetByIdAsync(int id);
         Task<AssociacaoReadDTO> CreateAsync(AssociacaoCreateDTO associacaoDto);
         Task UpdateAsync(int id, AssociacaoUpdateDTO associacaoDto);

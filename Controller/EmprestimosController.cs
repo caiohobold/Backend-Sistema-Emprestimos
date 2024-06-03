@@ -17,9 +17,10 @@ namespace EmprestimosAPI.Controller
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EmprestimoReadDTO>>> GetAll()
+        public async Task<ActionResult<IEnumerable<EmprestimoReadDTO>>> GetAll(int pageNumber, int pageSize)
         {
-            return Ok(await _emprestimoService.GetAllEmp());
+            var emprestimos = await _emprestimoService.GetAllEmp(pageNumber, pageSize);
+            return Ok(emprestimos);
         }
 
         [HttpGet("{id}")]
@@ -34,9 +35,9 @@ namespace EmprestimosAPI.Controller
         }
 
         [HttpGet("active")]
-        public async Task<ActionResult> GetOnlyActive()
+        public async Task<ActionResult> GetOnlyActive(int pageNumber, int pageSize)
         {
-            var emprestimos = await _emprestimoService.GetActiveEmp();
+            var emprestimos = await _emprestimoService.GetActiveEmp(pageNumber, pageSize);
             if(emprestimos == null || !emprestimos.Any())
             {
                 return NotFound("Nenhum empréstimo ativo encontrado.");
@@ -67,7 +68,6 @@ namespace EmprestimosAPI.Controller
         }
 
         [HttpPost("{id}/finalizar")]
-        //DESCOBRIR POR QUE DEU EMPRÉSTIMO NÃO ENCONTRADO.
         public async Task<ActionResult> FinalizarEmprestimo(int id)
         {
             try

@@ -1,5 +1,6 @@
 ﻿using EmprestimosAPI.Data;
 using EmprestimosAPI.DTO.Usuario;
+using EmprestimosAPI.Helpers;
 using EmprestimosAPI.Interfaces.RepositoriesInterfaces;
 using EmprestimosAPI.Models;
 using EmprestimosAPI.Services;
@@ -21,17 +22,16 @@ namespace EmprestimosAPI.Repositories
             _hashingService = hashingService;
         }
 
-        public async Task<IEnumerable<Usuario>> GetAllUsers()
+        public async Task<PagedList<Usuario>> GetAllUsers(int pageNumber, int pageSize)
         {
-            try
-            {
-                return await _context.Usuarios.Include(u => u.Associacao).ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error in GetAllUsers: {ex.Message}", ex);
-                throw;
-            }
+            var query = _context.Usuarios.Include(u => u.Associacao);
+
+            var count = await query.CountAsync();
+            var items = await query.Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedList<Usuario>(items, count, pageNumber, pageSize);
         }
 
         public async Task<Usuario> GetUserById(int id)

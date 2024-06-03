@@ -19,9 +19,9 @@ namespace EmprestimosAPI.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<EquipamentoReadDTO>> GetAllEquip()
+        public async Task<IEnumerable<EquipamentoReadDTO>> GetAllEquip(int pageNumber, int pageSize)
         {
-            var equipamentos = await _equipamentoRepository.GetAllEquip();
+            var equipamentos = await _equipamentoRepository.GetAllEquip(pageNumber, pageSize);
             return equipamentos.Select(e => new EquipamentoReadDTO
             {
                 IdEquipamento = e.IdEquipamento,
@@ -34,9 +34,9 @@ namespace EmprestimosAPI.Services
             }).ToList();
         }
 
-        public async Task<IEnumerable<EquipamentoReadDTO>> GetAllAvailableEquip()
+        public async Task<IEnumerable<EquipamentoReadDTO>> GetAllAvailableEquip(int pageNumber, int pageSize)
         {
-            var equipamentos = await _equipamentoRepository.GetAllAvailableEquip();
+            var equipamentos = await _equipamentoRepository.GetAllAvailableEquip(pageNumber, pageSize);
             return equipamentos.Select(e => new EquipamentoReadDTO
             {
                 IdEquipamento = e.IdEquipamento,

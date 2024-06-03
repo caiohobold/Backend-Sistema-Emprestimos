@@ -1,4 +1,5 @@
 ﻿using EmprestimosAPI.Data;
+using EmprestimosAPI.Helpers;
 using EmprestimosAPI.Interfaces.RepositoriesInterfaces;
 using EmprestimosAPI.Models;
 using Microsoft.EntityFrameworkCore;
@@ -14,9 +15,12 @@ namespace EmprestimosAPI.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Associacao>> GetAllAssocAsync()
+        public async Task<PagedList<Associacao>> GetAllAssocAsync(int pageNumber, int pageSize)
         {
-            return await _context.Associacoes.ToListAsync();
+            var query = _context.Associacoes.AsQueryable();
+
+            return await PagedList<Associacao>.CreateAsync(query, pageNumber, pageSize);
+            //return await _context.Associacoes.ToListAsync();
         }
 
         public async Task<Associacao> GetAssocById(int id)

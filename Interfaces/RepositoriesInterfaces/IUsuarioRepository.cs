@@ -1,11 +1,12 @@
 ﻿using EmprestimosAPI.DTO.Usuario;
+using EmprestimosAPI.Helpers;
 using EmprestimosAPI.Models;
 
 namespace EmprestimosAPI.Interfaces.RepositoriesInterfaces
 {
     public interface IUsuarioRepository
     {
-        Task<IEnumerable<Usuario>> GetAllUsers();
+        Task<PagedList<Usuario>> GetAllUsers(int pageNumber, int pageSize);
         Task<Usuario> GetUserById(int id);
         Task<Usuario> AddUser(UsuarioCreateDTO usuarioDTO);
         Task UpdateUser(Usuario usuario);

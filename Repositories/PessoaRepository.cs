@@ -1,5 +1,6 @@
 ﻿using EmprestimosAPI.Data;
 using EmprestimosAPI.DTO.Pessoa;
+using EmprestimosAPI.Helpers;
 using EmprestimosAPI.Interfaces.RepositoriesInterfaces;
 using EmprestimosAPI.Models;
 using Microsoft.EntityFrameworkCore;
@@ -15,9 +16,9 @@ namespace EmprestimosAPI.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<PessoaReadDTO>> GetAllPessoasAsync()
+        public async Task<PagedList<PessoaReadDTO>> GetAllPessoasAsync(int pageNumber, int pageSize)
         {
-            var pessoas = await _context.Pessoas
+            var query = _context.Pessoas
                 .Select(p => new PessoaReadDTO
                 {
                     IdPessoa = p.IdPessoa,
@@ -37,9 +38,13 @@ namespace EmprestimosAPI.Repositories
                                        .Select(e => (DateTime?)e.DataEmprestimo)
                                        .FirstOrDefault()
 
-                }).ToListAsync();
+                });
+
+            var count = await query.CountAsync();
+            var items = await query.Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize).ToListAsync();
            
-            return pessoas;
+            return new PagedList<PessoaReadDTO>(items, count, pageNumber, pageSize);
         }
 
         public async Task<PessoaReadDTO> GetPessoaByIdAsync(int id)

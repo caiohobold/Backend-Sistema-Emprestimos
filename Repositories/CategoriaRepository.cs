@@ -1,4 +1,5 @@
 ﻿using EmprestimosAPI.Data;
+using EmprestimosAPI.Helpers;
 using EmprestimosAPI.Interfaces.RepositoriesInterfaces;
 using EmprestimosAPI.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -15,9 +16,10 @@ namespace EmprestimosAPI.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Categoria>> GetAllCategAsync()
+        public async Task<PagedList<Categoria>> GetAllCategAsync(int pageNumber, int pageSize)
         {
-            return await _context.Categorias.ToListAsync();
+            var query = _context.Categorias.AsQueryable();
+            return await PagedList<Categoria>.CreateAsync(query, pageNumber, pageSize);
         }
 
         public async Task<Categoria> GetCategById(int id)

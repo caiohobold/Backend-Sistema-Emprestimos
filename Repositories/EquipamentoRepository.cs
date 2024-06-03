@@ -1,5 +1,6 @@
 ﻿using EmprestimosAPI.Data;
 using EmprestimosAPI.DTO.Equipamento;
+using EmprestimosAPI.Helpers;
 using EmprestimosAPI.Interfaces.RepositoriesInterfaces;
 using EmprestimosAPI.Models;
 using Microsoft.EntityFrameworkCore;
@@ -17,9 +18,9 @@ namespace EmprestimosAPI.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<EquipamentoReadDTO>> GetAllEquip()
+        public async Task<PagedList<EquipamentoReadDTO>> GetAllEquip(int pageNumber, int pageSize)
         {
-            var equipamentos = await _context.Equipamentos
+            var query = _context.Equipamentos
                 .Select(e => new EquipamentoReadDTO
                 {
                     IdEquipamento = e.IdEquipamento,
@@ -34,18 +35,29 @@ namespace EmprestimosAPI.Repositories
                                         .ThenByDescending(emp => emp.DataEmprestimo)
                                         .Select(emp => (int?)emp.Status)
                                         .FirstOrDefault() ?? -1
-                }).ToListAsync();
+                });
 
-            return equipamentos;
+            var count = await query.CountAsync();
+            var items = await query.Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedList<EquipamentoReadDTO>(items, count, pageNumber, pageSize);
             //return await _context.Equipamentos.Include(e => e.Categoria).ToListAsync();
         } 
 
-        public async Task<IEnumerable<Equipamento>> GetAllAvailableEquip()
+        public async Task<PagedList<Equipamento>> GetAllAvailableEquip(int pageNumber, int pageSize)
         {
-            return await _context.Equipamentos
+            var query = _context.Equipamentos
                 .Where(e => !_context.Emprestimos.Any(emp => emp.IdEquipamento == e.IdEquipamento && emp.Status == 0))
-                .Include(e => e.Categoria)
+                .Include(e => e.Categoria);
+
+            var count = await query.CountAsync();
+            var items = await query.Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            return new PagedList<Equipamento>(items, count, pageNumber, pageSize);
         }
 
         public async Task<Equipamento> GetEquipById(int id)

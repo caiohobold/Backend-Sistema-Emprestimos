@@ -15,9 +15,9 @@ namespace EmprestimosAPI.Services
             _repository = repository;
         }
 
-        public async Task<IEnumerable<CategoriaReadDTO>> GetAllAsync()
+        public async Task<IEnumerable<CategoriaReadDTO>> GetAllAsync(int pageNumber, int pageSize)
         {
-            var categorias = await _repository.GetAllCategAsync();
+            var categorias = await _repository.GetAllCategAsync(pageNumber, pageSize);
             return categorias.Select(c => new CategoriaReadDTO
             {
                 IdCategoria = c.IdCategoria,
