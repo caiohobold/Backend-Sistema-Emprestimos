@@ -7,6 +7,7 @@ namespace EmprestimosAPI.Interfaces.ServicesInterfaces
     {
         Task<IEnumerable<EmprestimoReadDTO>> GetAllEmp(int pageNumber, int pageSize);
         Task<EmprestimoReadDTO> GetEmpById(int id);
+        Task<IEnumerable<EmprestimoReadDTO>> GetEmpByPessoaId(int idPessoa);
         Task<IEnumerable<EmprestimoReadDTO>> GetActiveEmp(int pageNumber, int pageSize);
         Task<EmprestimoReadDTO> AddEmp(EmprestimoCreateDTO emprestimoDTO);
         Task UpdateEmp(int id, EmprestimoUpdateDTO emprestimoDTO);

@@ -22,14 +22,17 @@ namespace EmprestimosAPI.Services
         public async Task<IEnumerable<EmprestimoReadDTO>> GetAllEmp(int pageNumber, int pageSize)
         {
             var emprestimos = await _emprestimoRepository.GetAllEmp(pageNumber, pageSize);
-            return emprestimos.Select(e => new EmprestimoReadDTO
+            return emprestimos.Select(emprestimo => new EmprestimoReadDTO
             {
-                Id = e.Id,
-                IdPessoa = e.Pessoa.IdPessoa,
-                IdEquipamento = e.Equipamento.IdEquipamento,
-                DataEmprestimo = e.DataEmprestimo,
-                IdUsuario = e.Usuario.IdUsuario,
-                Status = e.Status
+                Id = emprestimo.Id,
+                IdPessoa = emprestimo.Pessoa.IdPessoa,
+                nomePessoa = emprestimo.Pessoa.NomeCompleto,
+                IdEquipamento = emprestimo.Equipamento.IdEquipamento,
+                nomeEquipamento = emprestimo.Equipamento.NomeEquipamento,
+                cargaEquipamento = emprestimo.Equipamento.CargaEquipamento,
+                DataEmprestimo = emprestimo.DataEmprestimo,
+                IdUsuario = emprestimo.Usuario.IdUsuario,
+                Status = emprestimo.Status
             }).ToList();
         }
 
@@ -42,24 +45,47 @@ namespace EmprestimosAPI.Services
             {
                 Id = emprestimo.Id,
                 IdPessoa = emprestimo.Pessoa.IdPessoa,
+                nomePessoa = emprestimo.Pessoa.NomeCompleto,
                 IdEquipamento = emprestimo.Equipamento.IdEquipamento,
+                nomeEquipamento = emprestimo.Equipamento.NomeEquipamento,
+                cargaEquipamento = emprestimo.Equipamento.CargaEquipamento,
                 DataEmprestimo = emprestimo.DataEmprestimo,
                 IdUsuario = emprestimo.Usuario.IdUsuario,
                 Status = emprestimo.Status
             };
         }
 
-        public async Task<IEnumerable<EmprestimoReadDTO>> GetActiveEmp(int pageNumber, int pageSize)
+        public async Task<IEnumerable<EmprestimoReadDTO>> GetEmpByPessoaId(int idPessoa)
         {
-            var emprestimos = await _emprestimoRepository.GetActiveEmp(pageNumber, pageSize);
+            var emprestimos = await _emprestimoRepository.GetEmpByPessoaId(idPessoa);
             return emprestimos.Select(e => new EmprestimoReadDTO
             {
                 Id = e.Id,
                 IdPessoa = e.IdPessoa,
+                nomePessoa = e.Pessoa.NomeCompleto,
                 IdEquipamento = e.IdEquipamento,
+                nomeEquipamento = e.Equipamento.NomeEquipamento,
+                cargaEquipamento = e.Equipamento.CargaEquipamento,
                 DataEmprestimo = e.DataEmprestimo,
-                IdUsuario = e.IdUsuario,
-                Status = e.Status
+                Status = e.Status,
+                IdUsuario = e.IdUsuario
+            }).ToList();
+        }
+
+        public async Task<IEnumerable<EmprestimoReadDTO>> GetActiveEmp(int pageNumber, int pageSize)
+        {
+            var emprestimos = await _emprestimoRepository.GetActiveEmp(pageNumber, pageSize);
+            return emprestimos.Select(emprestimo => new EmprestimoReadDTO
+            {
+                Id = emprestimo.Id,
+                IdPessoa = emprestimo.Pessoa.IdPessoa,
+                nomePessoa = emprestimo.Pessoa.NomeCompleto,
+                IdEquipamento = emprestimo.Equipamento.IdEquipamento,
+                nomeEquipamento = emprestimo.Equipamento.NomeEquipamento,
+                cargaEquipamento = emprestimo.Equipamento.CargaEquipamento,
+                DataEmprestimo = emprestimo.DataEmprestimo,
+                IdUsuario = emprestimo.Usuario.IdUsuario,
+                Status = emprestimo.Status
             }).ToList();
         }
 
@@ -92,7 +118,10 @@ namespace EmprestimosAPI.Services
             {
                 Id = emprestimo.Id,
                 IdPessoa = emprestimo.Pessoa.IdPessoa,
+                nomePessoa = emprestimo.Pessoa.NomeCompleto,
                 IdEquipamento = emprestimo.Equipamento.IdEquipamento,
+                nomeEquipamento = emprestimo.Equipamento.NomeEquipamento,
+                cargaEquipamento = emprestimo.Equipamento.CargaEquipamento,
                 DataEmprestimo = emprestimo.DataEmprestimo,
                 IdUsuario = emprestimo.Usuario.IdUsuario,
                 Status = emprestimo.Status

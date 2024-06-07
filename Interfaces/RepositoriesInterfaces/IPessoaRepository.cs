@@ -9,7 +9,7 @@ namespace EmprestimosAPI.Interfaces.RepositoriesInterfaces
         Task<PagedList<PessoaReadDTO>> GetAllPessoasAsync(int pageNumber, int pageSize);
         Task<PessoaReadDTO> GetPessoaByIdAsync(int id);
         Task<Pessoa> AddPessoaAsync(Pessoa pessoa);
-        Task UpdatePessoaAsync(PessoaReadDTO pessoa);
+        Task UpdatePessoaAsync(Pessoa pessoa);
         Task DeletePessoaAsync(int id);
     }
 }

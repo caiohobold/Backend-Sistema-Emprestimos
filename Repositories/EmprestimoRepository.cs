@@ -5,6 +5,7 @@ using EmprestimosAPI.Interfaces.RepositoriesInterfaces;
 using EmprestimosAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EmprestimosAPI.Repositories
 {
@@ -43,6 +44,15 @@ namespace EmprestimosAPI.Repositories
                                             .FirstOrDefaultAsync(e => e.Id == id);
 
             return emprestimo;
+        }
+
+        public async Task<IEnumerable<Emprestimo>> GetEmpByPessoaId(int idPessoa)
+        {
+            return await _context.Emprestimos
+                .Include(e => e.Pessoa)
+                .Include(e => e.Equipamento)
+                .Where(e => e.IdPessoa == idPessoa)
+                .ToListAsync();
         }
 
         public async Task<PagedList<Emprestimo>> GetActiveEmp(int pageNumber, int pageSize)

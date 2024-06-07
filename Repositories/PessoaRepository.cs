@@ -81,7 +81,7 @@ namespace EmprestimosAPI.Repositories
             return pessoa;
         }
 
-        public async Task UpdatePessoaAsync(PessoaReadDTO pessoa)
+        public async Task UpdatePessoaAsync(Pessoa pessoa)
         {
             _context.Entry(pessoa).State = EntityState.Modified;
             await _context.SaveChangesAsync();

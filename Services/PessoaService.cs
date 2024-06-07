@@ -91,7 +91,15 @@ namespace EmprestimosAPI.Services
             pessoa.Telefone = pessoaDTO.Telefone;
             pessoa.Descricao = pessoaDTO.Descricao;
 
-            await _pessoaRepository.UpdatePessoaAsync(pessoa);
+            await _pessoaRepository.UpdatePessoaAsync(new Pessoa
+            {
+                IdPessoa = pessoa.IdPessoa,
+                NomeCompleto = pessoa.NomeCompleto,
+                Cpf = pessoa.Cpf,
+                Email = pessoa.Email,
+                Telefone = pessoa.Telefone,
+                Descricao = pessoa.Descricao
+            });
         }
 
         public async Task DeletePessoaAsync(int id)

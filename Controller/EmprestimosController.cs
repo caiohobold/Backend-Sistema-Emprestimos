@@ -34,6 +34,17 @@ namespace EmprestimosAPI.Controller
             return Ok(emprestimo);
         }
 
+        [HttpGet("pessoa/{idPessoa}")]
+        public async Task<ActionResult<IEnumerable<EmprestimoReadDTO>>> GetEmpByPessoaId(int idPessoa)
+        {
+            var emprestimos = await _emprestimoService.GetEmpByPessoaId(idPessoa);
+            if(emprestimos == null || !emprestimos.Any())
+            {
+                return NotFound("Nenhum empréstimo encontrado para essa pessoa");
+            }
+            return Ok(emprestimos);
+        }
+
         [HttpGet("active")]
         public async Task<ActionResult> GetOnlyActive(int pageNumber, int pageSize)
         {
