@@ -31,6 +31,7 @@ namespace EmprestimosAPI.Services
                 nomeEquipamento = emprestimo.Equipamento.NomeEquipamento,
                 cargaEquipamento = emprestimo.Equipamento.CargaEquipamento,
                 DataEmprestimo = emprestimo.DataEmprestimo,
+                DataDevolucao = emprestimo.DataDevolucaoEmprestimo,
                 IdUsuario = emprestimo.Usuario.IdUsuario,
                 Status = emprestimo.Status
             }).ToList();
@@ -50,6 +51,7 @@ namespace EmprestimosAPI.Services
                 nomeEquipamento = emprestimo.Equipamento.NomeEquipamento,
                 cargaEquipamento = emprestimo.Equipamento.CargaEquipamento,
                 DataEmprestimo = emprestimo.DataEmprestimo,
+                DataDevolucao = emprestimo.DataDevolucaoEmprestimo,
                 IdUsuario = emprestimo.Usuario.IdUsuario,
                 Status = emprestimo.Status
             };
@@ -67,6 +69,7 @@ namespace EmprestimosAPI.Services
                 nomeEquipamento = e.Equipamento.NomeEquipamento,
                 cargaEquipamento = e.Equipamento.CargaEquipamento,
                 DataEmprestimo = e.DataEmprestimo,
+                DataDevolucao = e.DataDevolucaoEmprestimo,
                 Status = e.Status,
                 IdUsuario = e.IdUsuario
             }).ToList();
@@ -84,6 +87,7 @@ namespace EmprestimosAPI.Services
                 nomeEquipamento = emprestimo.Equipamento.NomeEquipamento,
                 cargaEquipamento = emprestimo.Equipamento.CargaEquipamento,
                 DataEmprestimo = emprestimo.DataEmprestimo,
+                DataDevolucao = emprestimo.DataDevolucaoEmprestimo,
                 IdUsuario = emprestimo.Usuario.IdUsuario,
                 Status = emprestimo.Status
             }).ToList();
@@ -94,6 +98,7 @@ namespace EmprestimosAPI.Services
             var emprestimo = new Emprestimo
             { 
                 DataEmprestimo = emprestimoDTO.DataEmprestimo,
+                DataDevolucaoEmprestimo = emprestimoDTO.DataDevolucao,
                 IdPessoa = emprestimoDTO.IdPessoa,
                 IdEquipamento = emprestimoDTO.IdEquipamento,
                 IdUsuario = emprestimoDTO.IdUsuario
@@ -123,6 +128,7 @@ namespace EmprestimosAPI.Services
                 nomeEquipamento = emprestimo.Equipamento.NomeEquipamento,
                 cargaEquipamento = emprestimo.Equipamento.CargaEquipamento,
                 DataEmprestimo = emprestimo.DataEmprestimo,
+                DataDevolucao = emprestimo.DataDevolucaoEmprestimo,
                 IdUsuario = emprestimo.Usuario.IdUsuario,
                 Status = emprestimo.Status
             };
@@ -138,6 +144,7 @@ namespace EmprestimosAPI.Services
             }
 
             emprestimo.DataEmprestimo = emprestimoDTO.DataEmprestimo;
+            emprestimo.DataDevolucaoEmprestimo = emprestimoDTO.DataDevolucao;
 
             await _emprestimoRepository.UpdateEmp(emprestimo);
         }

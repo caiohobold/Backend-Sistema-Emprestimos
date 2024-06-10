@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -15,16 +14,15 @@ namespace EmprestimosAPI.Migrations
                 name: "data_devolucao_emprestimo",
                 table: "Emprestimos",
                 type: "timestamp without time zone",
-                nullable: true);
-
+                nullable: false);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-            name: "data_devolucao_emprestimo",
-            table: "Emprestimos");
+                name: "data_devolucao_emprestimo",
+                table: "Emprestimos");
         }
     }
 }

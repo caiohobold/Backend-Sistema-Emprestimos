@@ -42,6 +42,6 @@ namespace EmprestimosAPI.Models
 
         [Column("data_devolucao_emprestimo")]
         [DataType(DataType.Date)]
-        public DateTime? DataDevolucaoEmprestimo { get; set; }
+        public DateTime DataDevolucaoEmprestimo { get; set; }
     }
 }

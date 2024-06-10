@@ -7,6 +7,7 @@ namespace EmprestimosAPI.DTO.Emprestimo
         public int IdPessoa { get; set; }
         public int IdEquipamento { get; set; }
         public DateTime DataEmprestimo {  get; set; }
+        public DateTime DataDevolucao { get; set; }
         public int IdUsuario { get; set; }
 
     }

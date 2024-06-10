@@ -107,7 +107,7 @@ namespace EmprestimosAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("DataDevolucaoEmprestimo")
+                    b.Property<DateTime>("DataDevolucaoEmprestimo")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("data_devolucao_emprestimo");
 

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EmprestimosAPI.Migrations
 {
     [DbContext(typeof(DbEmprestimosContext))]
-    [Migration("20240610145830_AddDataDevolucaoEmprestimoToEmprestimos")]
+    [Migration("20240610210015_AddDataDevolucaoEmprestimoToEmprestimos")]
     partial class AddDataDevolucaoEmprestimoToEmprestimos
     {
         /// <inheritdoc />
@@ -110,7 +110,7 @@ namespace EmprestimosAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("DataDevolucaoEmprestimo")
+                    b.Property<DateTime>("DataDevolucaoEmprestimo")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("data_devolucao_emprestimo");
 
