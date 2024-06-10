@@ -39,5 +39,9 @@ namespace EmprestimosAPI.Models
         public int IdUsuario { get; set; }
         [ForeignKey("IdUsuario")]
         public Usuario Usuario { get; set; }
+
+        [Column("data_devolucao_emprestimo")]
+        [DataType(DataType.Date)]
+        public DateTime? DataDevolucaoEmprestimo { get; set; }
     }
 }
