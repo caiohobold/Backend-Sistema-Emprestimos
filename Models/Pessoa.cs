@@ -33,5 +33,9 @@ namespace EmprestimosAPI.Models
         [Column("descricao")]
         public string Descricao { get; set; }
 
+        [StringLength (600)]
+        [Column("endereco")]
+        public string Endereco { get; set; }
+
     }
 }

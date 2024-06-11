@@ -27,6 +27,7 @@ namespace EmprestimosAPI.Repositories
                     Email = p.Email,
                     Telefone = p.Telefone,
                     Descricao = p.Descricao,
+                    Endereco = p.Endereco,
                     StatusEmprestimo = _context.Emprestimos
                                        .Where(e => e.IdPessoa == p.IdPessoa)
                                        .OrderByDescending(e => e.Status == 0)
@@ -59,6 +60,7 @@ namespace EmprestimosAPI.Repositories
                     Email = p.Email,
                     Telefone = p.Telefone,
                     Descricao = p.Descricao,
+                    Endereco = p.Endereco,
                     StatusEmprestimo = _context.Emprestimos
                                .Where(e => e.IdPessoa == p.IdPessoa)
                                .OrderByDescending(e => e.Status == 0)

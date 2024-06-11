@@ -95,6 +95,11 @@ namespace EmprestimosAPI.Services
 
         public async Task<EmprestimoReadDTO> AddEmp(EmprestimoCreateDTO emprestimoDTO)
         {
+            if (emprestimoDTO.DataDevolucao < emprestimoDTO.DataEmprestimo)
+            {
+                throw new ArgumentException("A data de devolução não pode ser anterior à data de início do empréstimo.");
+            }
+
             var emprestimo = new Emprestimo
             { 
                 DataEmprestimo = emprestimoDTO.DataEmprestimo,
@@ -141,6 +146,11 @@ namespace EmprestimosAPI.Services
             if (emprestimo == null)
             {
                 throw new KeyNotFoundException("Empréstimo Not Found");
+            }
+
+            if(emprestimoDTO.DataDevolucao < emprestimoDTO.DataEmprestimo)
+            {
+                throw new Exception("A data de devolução não pode ser anterior à data de início do empréstimo.");
             }
 
             emprestimo.DataEmprestimo = emprestimoDTO.DataEmprestimo;

@@ -27,6 +27,7 @@ namespace EmprestimosAPI.Services
                 Email = a.Email,
                 Telefone = a.Telefone,
                 Descricao = a.Descricao,
+                Endereco = a.Endereco,
                 StatusEmprestimo = a.StatusEmprestimo,
                 DataEmprestimo = a.DataEmprestimo
                 
@@ -46,6 +47,7 @@ namespace EmprestimosAPI.Services
                 Email = pessoa.Email,
                 Telefone = pessoa.Telefone,
                 Descricao = pessoa.Descricao,
+                Endereco = pessoa.Endereco,
                 StatusEmprestimo = pessoa.StatusEmprestimo,
                 DataEmprestimo = pessoa.DataEmprestimo
             };
@@ -61,7 +63,8 @@ namespace EmprestimosAPI.Services
                 Cpf = pessoaDTO.Cpf,
                 Email = pessoaDTO.Email,
                 Telefone = pessoaDTO.Telefone,
-                Descricao = pessoaDTO.Descricao
+                Descricao = pessoaDTO.Descricao,
+                Endereco = pessoaDTO.Endereco
             };
 
             var newPessoa = await _pessoaRepository.AddPessoaAsync(pessoa);
@@ -73,7 +76,8 @@ namespace EmprestimosAPI.Services
                 Cpf = newPessoa.Cpf,
                 Email = newPessoa.Email,
                 Telefone = newPessoa.Telefone,
-                Descricao = newPessoa.Descricao
+                Descricao = newPessoa.Descricao,
+                Endereco = newPessoa.Endereco
             };
         }
 
@@ -90,6 +94,7 @@ namespace EmprestimosAPI.Services
             pessoa.Email = pessoaDTO.Email;
             pessoa.Telefone = pessoaDTO.Telefone;
             pessoa.Descricao = pessoaDTO.Descricao;
+            pessoa.Endereco = pessoaDTO.Endereco;
 
             await _pessoaRepository.UpdatePessoaAsync(new Pessoa
             {
@@ -98,7 +103,8 @@ namespace EmprestimosAPI.Services
                 Cpf = pessoa.Cpf,
                 Email = pessoa.Email,
                 Telefone = pessoa.Telefone,
-                Descricao = pessoa.Descricao
+                Descricao = pessoa.Descricao,
+                Endereco = pessoa.Endereco
             });
         }
 
