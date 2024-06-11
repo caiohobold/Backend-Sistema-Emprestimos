@@ -89,7 +89,8 @@ namespace EmprestimosAPI.Repositories
 
         public async Task UpdateEmp(Emprestimo emprestimo)
         {
-            emprestimo.DataEmprestimo = DateTime.SpecifyKind(emprestimo.DataEmprestimo, DateTimeKind.Unspecified);
+            emprestimo.DataEmprestimo = DateTime.SpecifyKind(emprestimo.DataEmprestimo, DateTimeKind.Utc);
+            emprestimo.DataDevolucaoEmprestimo = DateTime.SpecifyKind(emprestimo.DataDevolucaoEmprestimo, DateTimeKind.Utc);
 
             _context.Entry(emprestimo).State = EntityState.Modified;
             await _context.SaveChangesAsync();

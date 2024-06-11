@@ -174,8 +174,10 @@ namespace EmprestimosAPI.Services
             {
                 throw new InvalidOperationException("Este empréstimo já foi finalizado.");
             }
-
+                
             emprestimo.Status = 1;
+            emprestimo.DataEmprestimo = DateTime.SpecifyKind(emprestimo.DataEmprestimo, DateTimeKind.Utc);
+            emprestimo.DataDevolucaoEmprestimo = DateTime.SpecifyKind(emprestimo.DataDevolucaoEmprestimo, DateTimeKind.Utc);
             await _emprestimoRepository.UpdateEmp(emprestimo);
         }
     }

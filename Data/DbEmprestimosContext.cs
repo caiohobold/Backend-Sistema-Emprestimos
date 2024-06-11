@@ -48,10 +48,29 @@ namespace EmprestimosAPI.Data
                 entity.Property(e => e.DataNascimento).HasColumnType("timestamp without time zone");
             });
 
+            modelBuilder.Entity<Emprestimo>(entity =>
+            {
+                entity.Property(e => e.DataEmprestimo)
+                      .HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc))
+                      .HasColumnType("timestamp with time zone");
+
+                entity.Property(e => e.DataDevolucaoEmprestimo)
+                      .HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Utc))
+                      .HasColumnType("timestamp with time zone");
+            });
+
             modelBuilder.Entity<Emprestimo>()
-                .Property(e => e.DataEmprestimo)
-                .HasConversion(v => v, v => DateTime.SpecifyKind(v, DateTimeKind.Unspecified))
-                .HasColumnType("timestamp without time zone");
+            .HasOne(e => e.Pessoa)
+            .WithMany()
+            .HasForeignKey(e => e.IdPessoa)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Emprestimo>()
+                .HasOne(e => e.Equipamento)
+                .WithMany()
+                .HasForeignKey(e => e.IdEquipamento)
+                .OnDelete(DeleteBehavior.Cascade);
+
 
         }
 
