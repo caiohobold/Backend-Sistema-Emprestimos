@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "wy4hOB1wcEXfi0EOg8gxNLh8UC3ZdsT8lQPwNhnp4QWl+Q16P8pjgqEUB5D4/vi2XQsie/0X/MQUPIUoV6WNRA==",
+  "dgSpecHash": "b6DVQDi2DNcrFO4DMAJG8McZ4tShu8E8W4DJtuVTWmtRCyi/ruV/tE970jnPTOdOFyJz+yLamL66dGbpe0YNKA==",
   "success": true,
   "projectFilePath": "C:\\Users\\caioh\\source\\repos\\EmprestimosAPI\\EmprestimosAPI\\EmprestimosAPI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\caioh\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\caioh\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\8.0.6\\microsoft.aspnetcore.authentication.jwtbearer.8.0.6.nupkg.sha512",
+    "C:\\Users\\caioh\\.nuget\\packages\\microsoft.aspnetcore.http.features\\5.0.17\\microsoft.aspnetcore.http.features.5.0.17.nupkg.sha512",
     "C:\\Users\\caioh\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\6.0.0\\microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512",
     "C:\\Users\\caioh\\.nuget\\packages\\microsoft.codeanalysis.analyzers\\3.3.3\\microsoft.codeanalysis.analyzers.3.3.3.nupkg.sha512",
     "C:\\Users\\caioh\\.nuget\\packages\\microsoft.codeanalysis.common\\4.5.0\\microsoft.codeanalysis.common.4.5.0.nupkg.sha512",

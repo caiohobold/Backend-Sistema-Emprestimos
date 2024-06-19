@@ -8,5 +8,7 @@
         public string Telefone { get; set; }
         public string Endereco { get; set; }
         public string Descricao { get; set; }
+        public IFormFile Foto1Pessoa { get; set; }
+        public IFormFile Foto2Pessoa { get; set; }
     }
 }

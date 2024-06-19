@@ -44,5 +44,18 @@ namespace EmprestimosAPI.Models
         [Column("descricao_equipamento")]
         public string DescricaoEquipamento { get; set; }
 
+        [Column("foto1_equipamento")]
+        public byte[]? Foto1 { get; set; }
+
+        [Column("foto2_equipamento")]
+        public byte[]? Foto2 { get; set; }
+
+        [Required]
+        [Column("id_local")]
+        public int IdLocal { get; set; }
+
+        [ForeignKey("IdLocal")]
+        public Local Local { get; set; }
+
     }
 }

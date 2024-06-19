@@ -56,6 +56,13 @@ namespace EmprestimosAPI.Controller
             return Ok(emprestimos);
         }
 
+        [HttpGet("atrasados")]
+        public async Task<ActionResult<IEnumerable<EmprestimoReadDTO>>> GetEmprestimosAtrasados()
+        {
+            var emprestimos = await _emprestimoService.GetEmpAtrasados();
+            return Ok(emprestimos);
+        }
+
         [HttpPost]
         public async Task<ActionResult<EmprestimoReadDTO>> Post(EmprestimoCreateDTO emprestimoDTO)
         {

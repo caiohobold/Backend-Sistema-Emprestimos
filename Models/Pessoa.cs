@@ -37,5 +37,11 @@ namespace EmprestimosAPI.Models
         [Column("endereco")]
         public string Endereco { get; set; }
 
+        [Column("foto1_pessoa")]
+        public byte[]? Foto1Pessoa { get; set; }
+
+        [Column("foto2_pessoa")]
+        public byte[]? Foto2Pessoa { get; set; }
+
     }
 }

@@ -1,6 +1,4 @@
-﻿using EmprestimosAPI.Models;
-
-namespace EmprestimosAPI.DTO.Equipamento
+﻿namespace EmprestimosAPI.DTO.Equipamento
 {
     public class EquipamentoReadDTO
     {
@@ -11,5 +9,9 @@ namespace EmprestimosAPI.DTO.Equipamento
         public int CargaEquipamento { get; set; }
         public string DescricaoEquipamento { get; set; }
         public int StatusEquipamento { get; set; }
+        public string Foto1 { get; set; }
+        public string Foto2 { get; set; }
+        public int IdLocal { get; set; }
+        public string NomeLocal { get; set; }
     }
 }

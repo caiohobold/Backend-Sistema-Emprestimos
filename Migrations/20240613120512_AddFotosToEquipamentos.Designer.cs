@@ -3,6 +3,7 @@ using System;
 using EmprestimosAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EmprestimosAPI.Migrations
 {
     [DbContext(typeof(DbEmprestimosContext))]
-    partial class DbEmprestimosContextModelSnapshot : ModelSnapshot
+    [Migration("20240613120512_AddFotosToEquipamentos")]
+    partial class AddFotosToEquipamentos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -167,23 +170,9 @@ namespace EmprestimosAPI.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("estado_equipamento");
 
-                    b.Property<byte[]>("Foto1")
-                        .IsRequired()
-                        .HasColumnType("bytea")
-                        .HasColumnName("foto1_equipamento");
-
-                    b.Property<byte[]>("Foto2")
-                        .IsRequired()
-                        .HasColumnType("bytea")
-                        .HasColumnName("foto2_equipamento");
-
                     b.Property<int>("IdCategoria")
                         .HasColumnType("integer")
                         .HasColumnName("id_categoria");
-
-                    b.Property<int>("IdLocal")
-                        .HasColumnType("integer")
-                        .HasColumnName("id_local");
 
                     b.Property<string>("NomeEquipamento")
                         .IsRequired()
@@ -195,29 +184,7 @@ namespace EmprestimosAPI.Migrations
 
                     b.HasIndex("IdCategoria");
 
-                    b.HasIndex("IdLocal");
-
                     b.ToTable("Equipamentos");
-                });
-
-            modelBuilder.Entity("EmprestimosAPI.Models.Local", b =>
-                {
-                    b.Property<int>("IdLocal")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("id_local");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("IdLocal"));
-
-                    b.Property<string>("NomeLocal")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("nome_local");
-
-                    b.HasKey("IdLocal");
-
-                    b.ToTable("Locais");
                 });
 
             modelBuilder.Entity("EmprestimosAPI.Models.Pessoa", b =>
@@ -252,14 +219,6 @@ namespace EmprestimosAPI.Migrations
                         .HasMaxLength(600)
                         .HasColumnType("character varying(600)")
                         .HasColumnName("endereco");
-
-                    b.Property<byte[]>("Foto1Pessoa")
-                        .HasColumnType("bytea")
-                        .HasColumnName("foto1_pessoa");
-
-                    b.Property<byte[]>("Foto2Pessoa")
-                        .HasColumnType("bytea")
-                        .HasColumnName("foto2_pessoa");
 
                     b.Property<string>("NomeCompleto")
                         .IsRequired()
@@ -373,15 +332,7 @@ namespace EmprestimosAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EmprestimosAPI.Models.Local", "Local")
-                        .WithMany("Equipamentos")
-                        .HasForeignKey("IdLocal")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Categoria");
-
-                    b.Navigation("Local");
                 });
 
             modelBuilder.Entity("EmprestimosAPI.Models.Usuario", b =>
@@ -393,11 +344,6 @@ namespace EmprestimosAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("Associacao");
-                });
-
-            modelBuilder.Entity("EmprestimosAPI.Models.Local", b =>
-                {
-                    b.Navigation("Equipamentos");
                 });
 #pragma warning restore 612, 618
         }

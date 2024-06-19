@@ -71,6 +71,17 @@ namespace EmprestimosAPI.Repositories
             return new PagedList<Emprestimo>(items, count, pageNumber, pageSize);
         }
 
+        public async Task<IEnumerable<Emprestimo>> GetEmpAtrasados()
+        {
+            var today = DateTime.UtcNow.Date;
+            return await _context.Emprestimos
+                .Include(e => e.Pessoa)
+                .Include(e => e.Equipamento)
+                .Include(e => e.Usuario)
+                .Where(e => e.Status == 0 && e.DataDevolucaoEmprestimo == today)
+                .ToListAsync();
+        }
+
         public async Task<Emprestimo> AddEmp(Emprestimo emprestimo)
         {
 

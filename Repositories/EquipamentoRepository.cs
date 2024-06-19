@@ -29,6 +29,8 @@ namespace EmprestimosAPI.Repositories
                     EstadoEquipamento = e.EstadoEquipamento,
                     CargaEquipamento = e.CargaEquipamento,
                     DescricaoEquipamento = e.DescricaoEquipamento,
+                    Foto1 = e.Foto1 != null ? Convert.ToBase64String(e.Foto1) : null,
+                    Foto2 = e.Foto2 != null ? Convert.ToBase64String(e.Foto2) : null,
                     StatusEquipamento = _context.Emprestimos
                                         .Where(emp => emp.IdEquipamento == e.IdEquipamento)
                                         .OrderByDescending(emp => emp.Status == 0)
@@ -44,7 +46,7 @@ namespace EmprestimosAPI.Repositories
 
             return new PagedList<EquipamentoReadDTO>(items, count, pageNumber, pageSize);
             //return await _context.Equipamentos.Include(e => e.Categoria).ToListAsync();
-        } 
+        }
 
         public async Task<PagedList<Equipamento>> GetAllAvailableEquip(int pageNumber, int pageSize)
         {
@@ -64,6 +66,7 @@ namespace EmprestimosAPI.Repositories
         {
             var equipamento = await _context.Equipamentos
                                 .Include(e => e.Categoria)
+                                .Include(e => e.Local)
                                 .FirstOrDefaultAsync(e => e.IdEquipamento == id);
 
             return equipamento;

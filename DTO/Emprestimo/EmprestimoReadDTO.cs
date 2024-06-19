@@ -5,6 +5,7 @@
         public int Id { get; set; }
         public int IdPessoa { get; set; }
         public string nomePessoa { get; set; }
+        public string telefonePessoa { get; set; }
         public int IdEquipamento { get; set; }
         public string nomeEquipamento { get; set; }
         public int cargaEquipamento { get; set; }

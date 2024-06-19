@@ -16,10 +16,16 @@ namespace EmprestimosAPI.Data
         public DbSet<Equipamento> Equipamentos { get; set; }
         public DbSet<Categoria> Categorias { get; set; }
         public DbSet<Emprestimo> Emprestimos { get; set; }
+        public DbSet<Local> Locais { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Local>()
+                .HasMany(l => l.Equipamentos)
+                .WithOne(e => e.Local)
+                .HasForeignKey(e => e.IdLocal);
 
             modelBuilder.Entity<Associacao>(entity =>
             {

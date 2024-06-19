@@ -30,6 +30,8 @@ namespace EmprestimosAPI
             builder.Services.AddScoped<IUsuarioService, UsuarioService>();
             builder.Services.AddScoped<IPessoaRepository, PessoaRepository>();
             builder.Services.AddScoped<IPessoaService, PessoaService>();
+            builder.Services.AddScoped<ILocalRepository, LocalRepository>();
+            builder.Services.AddScoped<ILocalService, LocalService>();
             builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
             builder.Services.AddScoped<ICategoriaService, CategoriaService>();
             builder.Services.AddScoped<IEquipamentoRepository, EquipamentoRepository>();

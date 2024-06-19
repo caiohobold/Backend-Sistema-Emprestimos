@@ -1,4 +1,5 @@
 ﻿using EmprestimosAPI.DTO.Equipamento;
+using EmprestimosAPI.DTO.Local;
 using EmprestimosAPI.Interfaces.ServicesInterfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -46,7 +47,7 @@ namespace EmprestimosAPI.Controller
         }
 
         [HttpPost]
-        public async Task<ActionResult<EquipamentoReadDTO>> Post(EquipamentoCreateDTO equipamentoDTO)
+        public async Task<ActionResult<EquipamentoReadDTO>> Post([FromForm] EquipamentoCreateDTO equipamentoDTO)
         {
             try
             {
@@ -60,10 +61,28 @@ namespace EmprestimosAPI.Controller
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put (int id, EquipamentoUpdateDTO equipamentoDTO)
+        public async Task<ActionResult> Put (int id, [FromForm] EquipamentoUpdateDTO equipamentoDTO)
         {
             await _equipamentoService.UpdateEquip(id, equipamentoDTO);
             return Ok();
+        }
+
+        [HttpPatch("{id}/local")]
+        public async Task<ActionResult> UpdateLocal(int id, [FromBody] UpdateLocalDTO updateLocalDTO)
+        {
+            try
+            {
+                await _equipamentoService.UpdateLocal(id, updateLocalDTO);
+                return Ok();
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
         }
 
         [HttpDelete("{id}")]
