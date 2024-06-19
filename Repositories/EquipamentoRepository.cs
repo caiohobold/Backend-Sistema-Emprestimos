@@ -26,9 +26,11 @@ namespace EmprestimosAPI.Repositories
                     IdEquipamento = e.IdEquipamento,
                     NomeEquipamento = e.NomeEquipamento,
                     NomeCategoriaEquipamento = e.Categoria.NomeCategoria,
+                    IdCategoria = e.Categoria.IdCategoria,
                     EstadoEquipamento = e.EstadoEquipamento,
                     CargaEquipamento = e.CargaEquipamento,
                     DescricaoEquipamento = e.DescricaoEquipamento,
+                    IdLocal = e.IdLocal,
                     Foto1 = e.Foto1 != null ? Convert.ToBase64String(e.Foto1) : null,
                     Foto2 = e.Foto2 != null ? Convert.ToBase64String(e.Foto2) : null,
                     StatusEquipamento = _context.Emprestimos
