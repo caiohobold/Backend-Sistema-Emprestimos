@@ -8,6 +8,7 @@ namespace EmprestimosAPI.Interfaces.RepositoriesInterfaces
     {
         Task<PagedList<Usuario>> GetAllUsers(int pageNumber, int pageSize);
         Task<Usuario> GetUserById(int id);
+        Task<Usuario> GetUserByEmailAsync(string email);
         Task<Usuario> AddUser(UsuarioCreateDTO usuarioDTO);
         Task UpdateUser(Usuario usuario);
         Task DeleteUser(int id);

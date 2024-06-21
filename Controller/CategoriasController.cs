@@ -1,5 +1,6 @@
 ﻿using EmprestimosAPI.DTO.Categoria;
 using EmprestimosAPI.Interfaces.ServicesInterfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,6 +33,7 @@ namespace EmprestimosAPI.Controller
             return Ok(categoria);
         }
 
+        [Authorize(Roles = "Associacao")]
         [HttpPost]
         public async Task<ActionResult<CategoriaReadDTO>> Post(CategoriaCreateDTO categoriaDTO)
         {
@@ -40,6 +42,7 @@ namespace EmprestimosAPI.Controller
             return CreatedAtAction(nameof(GetById), new { Id = categoriaReadDto.IdCategoria }, categoriaReadDto);
         }
 
+        [Authorize(Roles = "Associacao")]
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, CategoriaUpdateDTO categoriaDTO)
         {
@@ -47,6 +50,7 @@ namespace EmprestimosAPI.Controller
             return Ok();
         }
 
+        [Authorize(Roles = "Associacao")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {

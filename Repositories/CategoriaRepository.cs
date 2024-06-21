@@ -43,11 +43,21 @@ namespace EmprestimosAPI.Repositories
         public async Task DeleteCateg(int id)
         {
             var categoria = await _context.Categorias.FindAsync(id);
-            if(categoria != null)
+            if(categoria == null)
             {
-                _context.Categorias.Remove(categoria);
-                await _context.SaveChangesAsync();
+                throw new KeyNotFoundException("Categoria não encontrada.");
             }
+
+            var equipamentoCadastrado = await _context.Equipamentos
+                                        .Where(e => e.IdCategoria == id)
+                                        .AnyAsync();
+
+            if (equipamentoCadastrado)
+            {
+                throw new InvalidOperationException("Não é possível remover uma categoria vinculada a um equipamento cadastrado.");
+            }
+            _context.Categorias.Remove(categoria);
+            await _context.SaveChangesAsync();
         }
     }
 }

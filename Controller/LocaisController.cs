@@ -1,5 +1,6 @@
 ﻿using EmprestimosAPI.DTO.Local;
 using EmprestimosAPI.Interfaces.ServicesInterfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmprestimosAPI.Controllers
@@ -34,6 +35,7 @@ namespace EmprestimosAPI.Controllers
             return Ok(local);
         }
 
+        [Authorize(Roles = "Associacao")]
         [HttpPost]
         public async Task<ActionResult<LocalReadDTO>> AddLocal(LocalCreateDTO localDTO)
         {
@@ -41,6 +43,7 @@ namespace EmprestimosAPI.Controllers
             return CreatedAtAction(nameof(GetLocalById), new { id = local.IdLocal }, local);
         }
 
+        [Authorize(Roles = "Associacao")]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateLocal(int id, LocalUpdateDTO localDTO)
         {
@@ -56,6 +59,7 @@ namespace EmprestimosAPI.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Associacao")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLocal(int id)
         {

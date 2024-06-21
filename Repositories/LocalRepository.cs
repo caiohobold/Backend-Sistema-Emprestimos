@@ -59,6 +59,15 @@ namespace EmprestimosAPI.Repositories
                 throw new KeyNotFoundException("Local não encontrado.");
             }
 
+            var equipamentosCadastrados = await _context.Equipamentos
+                                            .Where(e => e.IdLocal == id)
+                                            .AnyAsync();
+
+            if (equipamentosCadastrados)
+            {
+                throw new InvalidOperationException("Não é possível remover locais que tenham equipamentos vinculados.");
+            }
+
             _context.Locais.Remove(local);
             await _context.SaveChangesAsync();
         }

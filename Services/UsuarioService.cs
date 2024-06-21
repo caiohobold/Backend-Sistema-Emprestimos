@@ -124,5 +124,15 @@ namespace EmprestimosAPI.Services
 
             await _usuarioRepository.DeleteUser(id);
         }
+
+        public async Task ChangeUserPassword(int id, string newPassword)
+        {
+            var user = await _usuarioRepository.GetUserById(id);
+            if(user != null)
+            {
+                user.SenhaHash = _hashingService.HashPassword(user, newPassword);
+                await _usuarioRepository.UpdateUser(user);
+            }
+        }
     }
 }

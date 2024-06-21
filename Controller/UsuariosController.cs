@@ -3,10 +3,12 @@ using EmprestimosAPI.Interfaces.Account;
 using EmprestimosAPI.Interfaces.Services;
 using EmprestimosAPI.Models;
 using EmprestimosAPI.Token;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using System.Security.Claims;
 
 namespace EmprestimosAPI.Controller
 {
@@ -41,7 +43,8 @@ namespace EmprestimosAPI.Controller
             return Ok(usuario);
         }
 
-        [HttpPost("register")]
+        [Authorize(Roles = "Associacao")]
+        [HttpPost("register-user")]
         public async Task<ActionResult<UserToken>> Post(UsuarioCreateDTO usuarioDTO)
         {
             if(usuarioDTO == null)
@@ -63,7 +66,7 @@ namespace EmprestimosAPI.Controller
                 return BadRequest("Ocorreu um erro ao cadastrar.");
             }
 
-            var token = _authenticateService.GenerateToken(usuarioReadDto.IdUsuario, usuarioReadDto.EmailPessoal, usuarioReadDto.NomeCompleto, usuarioReadDto.AssociacaoNomeFantasia);
+            var token = _authenticateService.GenerateToken(usuarioReadDto.IdUsuario, usuarioReadDto.EmailPessoal, usuarioReadDto.NomeCompleto, "Usuario");
 
             return new UserToken
             {
@@ -87,7 +90,7 @@ namespace EmprestimosAPI.Controller
             }
 
             var usuario = await _authenticateService.GetUserByEmail(loginModel.Email);
-            var token = _authenticateService.GenerateToken(usuario.IdUsuario, usuario.EmailPessoal, usuario.NomeCompleto, usuario.Associacao.NomeFantasia);
+            var token = _authenticateService.GenerateToken(usuario.IdUsuario, usuario.EmailPessoal, usuario.NomeCompleto, "Usuario");
 
             return new UserToken { Token = token };
         }
@@ -104,6 +107,36 @@ namespace EmprestimosAPI.Controller
         public async Task<ActionResult> Delete(int id)
         {
             await _usuarioService.DeleteUser(id);
+            return NoContent();
+        }
+
+        [Authorize]
+        [HttpGet("me")]
+        public async Task<ActionResult<UsuarioReadDTO>> GetMe()
+        {
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
+
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+            {
+                return BadRequest("Invalid token");
+            }
+
+            var usuario = await _usuarioService.GetUserById(userId);
+            if (usuario == null)
+            {
+                return NotFound("User not found");
+            }
+
+            return Ok(usuario);
+        }
+
+
+        [Authorize]
+        [HttpPut("me")]
+        public async Task<ActionResult> UpdateMe([FromBody] UsuarioUpdateDTO usuarioDTO)
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            await _usuarioService.UpdateUser(userId, usuarioDTO);
             return NoContent();
         }
     }

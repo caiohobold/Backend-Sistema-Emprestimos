@@ -82,6 +82,13 @@ namespace EmprestimosAPI
             }
             );
 
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AssociacaoPolicy", policy => policy.RequireRole("Associacao"));
+                options.AddPolicy("UsuarioPolicy", policy => policy.RequireRole("Usuario"));
+            });
+
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -89,9 +96,18 @@ namespace EmprestimosAPI
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+                app.UseHsts();
             }
 
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
+
+            app.UseRouting();
 
             app.UseCors("AllowSpecificOrigin");
             app.UseAuthentication();

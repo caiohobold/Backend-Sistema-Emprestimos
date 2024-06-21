@@ -11,6 +11,7 @@ namespace EmprestimosAPI.Interfaces.Services
         Task<UsuarioReadDTO> AddUser(UsuarioCreateDTO usuarioDTO);
         Task UpdateUser(int id, UsuarioUpdateDTO usuarioDTO);
         Task DeleteUser(int id);
+        Task ChangeUserPassword(int id, string newPassword);
     }
 }
 

@@ -4,9 +4,11 @@ using EmprestimosAPI.Interfaces.RepositoriesInterfaces;
 using EmprestimosAPI.Interfaces.Services;
 using EmprestimosAPI.Models;
 using EmprestimosAPI.Token;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 
 namespace EmprestimosAPI.Controller
 {
@@ -72,7 +74,7 @@ namespace EmprestimosAPI.Controller
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<UserToken>> Selecionar(LoginModel loginModel)
+        public async Task<ActionResult<UserToken>> LoginAssociacao(LoginModel loginModel)
         {
             var existe = await _authenticateService.AssocExists(loginModel.Email);
             if (!existe)
@@ -87,11 +89,11 @@ namespace EmprestimosAPI.Controller
             }
 
             var associacao = await _authenticateService.GetAssocByEmail(loginModel.Email);
-            var token = _authenticateService.GenerateToken(associacao.IdAssociacao, associacao.EmailProfissional, associacao.NomeFantasia, associacao.NomeFantasia);
+            var token = _authenticateService.GenerateToken(associacao.IdAssociacao, associacao.EmailProfissional, associacao.NomeFantasia, "Associacao");
 
             return new UserToken { Token = token };
-                
         }
+
 
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, AssociacaoUpdateDTO associacaoDto)
@@ -104,6 +106,35 @@ namespace EmprestimosAPI.Controller
         public async Task<ActionResult> Delete(int id)
         {
             await _service.DeleteAsync(id);
+            return NoContent();
+        }
+
+        [Authorize]
+        [HttpGet("me")]
+        public async Task<ActionResult<AssociacaoReadDTO>> GetMyAssoc()
+        {
+            var assocIdClaim = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
+
+            if(string.IsNullOrEmpty(assocIdClaim) || int.TryParse(assocIdClaim, out int assocId))
+            {
+                return BadRequest("Invalid Token");
+            }
+
+            var assoc = await _service.GetByIdAsync(assocId);
+            if(assoc == null)
+            {
+                return NotFound("Assoc not found");
+            }
+
+            return Ok(assoc);
+        }
+
+        [Authorize]
+        [HttpPut("me")]
+        public async Task<ActionResult> UpdateMyAssoc([FromBody] AssociacaoUpdateDTO associacaoDTO)
+        {
+            var assocId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            await _service.UpdateAsync(assocId, associacaoDTO);
             return NoContent();
         }
     }

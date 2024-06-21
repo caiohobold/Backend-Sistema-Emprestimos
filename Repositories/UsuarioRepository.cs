@@ -6,6 +6,7 @@ using EmprestimosAPI.Models;
 using EmprestimosAPI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EmprestimosAPI.Repositories
 {
@@ -58,6 +59,11 @@ namespace EmprestimosAPI.Repositories
                 _logger.LogError($"Error in GetUserById: {ex.Message}", ex);
                 throw;
             }
+        }
+
+        public async Task<Usuario> GetUserByEmailAsync(string email)
+        {
+            return await _context.Usuarios.FirstOrDefaultAsync(u => u.EmailPessoal == email);
         }
 
         public async Task<Usuario> AddUser(UsuarioCreateDTO usuarioDTO)
