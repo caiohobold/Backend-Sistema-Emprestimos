@@ -1,11 +1,9 @@
-﻿namespace EmprestimosAPI.Models
+﻿namespace EmprestimosAPI.DTO.Feedback
 {
-    public class Feedback
+    public class FeedbackModel
     {
-        public int Id { get; set; }
         public string UserName { get; set; }
         public string Message { get; set; }
-        public string Type { get; set; }
         public DateTime Date { get; set; } = DateTime.UtcNow;
     }
 }

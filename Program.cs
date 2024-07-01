@@ -38,6 +38,8 @@ namespace EmprestimosAPI
             builder.Services.AddScoped<IEquipamentoService, EquipamentoService>();
             builder.Services.AddScoped<IEmprestimoRepository, EmprestimoRepository>();
             builder.Services.AddScoped<IEmprestimoService, EmprestimoService>();
+            builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
+            builder.Services.AddScoped<IFeedbackService,  FeedbackService>();
             builder.Services.AddScoped<HashingService>();
             builder.Services.AddScoped<IAuthenticate, AuthenticateService>();
             builder.Services.AddCors(options =>

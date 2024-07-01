@@ -18,7 +18,6 @@ namespace EmprestimosAPI.Data
         public DbSet<Categoria> Categorias { get; set; }
         public DbSet<Emprestimo> Emprestimos { get; set; }
         public DbSet<Local> Locais { get; set; }
-
         public DbSet<Feedback> Feedbacks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
