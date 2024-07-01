@@ -139,5 +139,17 @@ namespace EmprestimosAPI.Controller
             await _usuarioService.UpdateUser(userId, usuarioDTO);
             return NoContent();
         }
+
+        [HttpPut("{id}/change-password")]
+        public async Task<ActionResult> ChangePassword(int id, [FromBody] ChangePasswordDTO changePasswordDTO)
+        {
+            if(changePasswordDTO == null || string.IsNullOrWhiteSpace(changePasswordDTO.NovaSenha))
+            {
+                return BadRequest("Senha inválida.");
+            }
+
+            await _usuarioService.ChangeUserPassword(id, changePasswordDTO.NovaSenha);
+            return NoContent();
+        }
     }
 }

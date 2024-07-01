@@ -53,7 +53,7 @@ namespace EmprestimosAPI.Repositories
         public async Task<PagedList<Equipamento>> GetAllAvailableEquip(int pageNumber, int pageSize)
         {
             var query = _context.Equipamentos
-                .Where(e => !_context.Emprestimos.Any(emp => emp.IdEquipamento == e.IdEquipamento && emp.Status == 0))
+                .Where(e => !_context.Emprestimos.Any(emp => emp.IdEquipamento == e.IdEquipamento && emp.Status == 0) && e.EstadoEquipamento != 2 && e.EstadoEquipamento != 3)
                 .Include(e => e.Categoria);
 
             var count = await query.CountAsync();

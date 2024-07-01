@@ -28,8 +28,6 @@ namespace EmprestimosAPI.Repositories
                     Telefone = p.Telefone,
                     Descricao = p.Descricao,
                     Endereco = p.Endereco,
-                    Foto1Pessoa = p.Foto1Pessoa != null ? Convert.ToBase64String(p.Foto1Pessoa) : null,
-                    Foto2Pessoa = p.Foto2Pessoa != null ? Convert.ToBase64String(p.Foto2Pessoa) : null,
                     StatusEmprestimo = _context.Emprestimos
                                        .Where(e => e.IdPessoa == p.IdPessoa)
                                        .OrderByDescending(e => e.Status == 0)
@@ -63,8 +61,6 @@ namespace EmprestimosAPI.Repositories
                     Telefone = p.Telefone,
                     Descricao = p.Descricao,
                     Endereco = p.Endereco,
-                    Foto1Pessoa = p.Foto1Pessoa != null ? Convert.ToBase64String(p.Foto1Pessoa) : null,
-                    Foto2Pessoa = p.Foto2Pessoa != null ? Convert.ToBase64String(p.Foto2Pessoa) : null,
                     StatusEmprestimo = _context.Emprestimos
                                .Where(e => e.IdPessoa == p.IdPessoa)
                                .OrderByDescending(e => e.Status == 0)

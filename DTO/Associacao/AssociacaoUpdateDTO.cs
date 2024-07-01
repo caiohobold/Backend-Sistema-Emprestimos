@@ -6,6 +6,6 @@
         public string NomeFantasia { get; set; }
         public string Numero_Telefone { get; set; }
         public string Endereco { get; set; }
-        public string Senha { get; set; }
+        public string RazaoSocial { get; set; }
     }
 }

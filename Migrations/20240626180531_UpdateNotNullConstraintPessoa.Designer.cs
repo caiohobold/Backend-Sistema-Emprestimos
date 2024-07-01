@@ -3,6 +3,7 @@ using System;
 using EmprestimosAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace EmprestimosAPI.Migrations
 {
     [DbContext(typeof(DbEmprestimosContext))]
-    partial class DbEmprestimosContextModelSnapshot : ModelSnapshot
+    [Migration("20240626180531_UpdateNotNullConstraintPessoa")]
+    partial class UpdateNotNullConstraintPessoa
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -250,6 +253,14 @@ namespace EmprestimosAPI.Migrations
                         .HasMaxLength(600)
                         .HasColumnType("character varying(600)")
                         .HasColumnName("endereco");
+
+                    b.Property<byte[]>("Foto1Pessoa")
+                        .HasColumnType("bytea")
+                        .HasColumnName("foto1_pessoa");
+
+                    b.Property<byte[]>("Foto2Pessoa")
+                        .HasColumnType("bytea")
+                        .HasColumnName("foto2_pessoa");
 
                     b.Property<string>("NomeCompleto")
                         .IsRequired()

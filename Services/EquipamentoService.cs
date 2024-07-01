@@ -184,6 +184,18 @@ namespace EmprestimosAPI.Services
             await _equipamentoRepository.UpdateEquip(equipamento);
         }
 
+        public async Task UpdateEstado(int id, UpdateEstadoEquipamentoDTO updateEstadoDTO)
+        {
+            var equipamento = await _equipamentoRepository.GetEquipById(id);
+            if(equipamento == null)
+            {
+                throw new KeyNotFoundException("Equipamento não encontrado");
+            }
+
+            equipamento.EstadoEquipamento = updateEstadoDTO.IdEstadoEquipamento;
+            await _equipamentoRepository.UpdateEquip(equipamento);
+        }
+
         public async Task DeleteEquip(int id)
         {
             var equipamento = await _equipamentoRepository.GetEquipById(id);

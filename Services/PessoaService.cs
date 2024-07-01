@@ -29,9 +29,7 @@ namespace EmprestimosAPI.Services
                 Descricao = a.Descricao,
                 Endereco = a.Endereco,
                 StatusEmprestimo = a.StatusEmprestimo,
-                DataEmprestimo = a.DataEmprestimo,
-                Foto1Pessoa = a.Foto1Pessoa,
-                Foto2Pessoa = a.Foto2Pessoa
+                DataEmprestimo = a.DataEmprestimo
             }).ToList();
         }
 
@@ -50,9 +48,7 @@ namespace EmprestimosAPI.Services
                 Descricao = pessoa.Descricao,
                 Endereco = pessoa.Endereco,
                 StatusEmprestimo = pessoa.StatusEmprestimo,
-                DataEmprestimo = pessoa.DataEmprestimo,
-                Foto1Pessoa = pessoa.Foto1Pessoa,
-                Foto2Pessoa = pessoa.Foto2Pessoa
+                DataEmprestimo = pessoa.DataEmprestimo
             };
 
             return pessoaDTO;

@@ -12,6 +12,7 @@ namespace EmprestimosAPI.Interfaces.ServicesInterfaces
         Task<EquipamentoReadDTO> AddEquip(EquipamentoCreateDTO usuarioDTO);
         Task UpdateEquip(int id, EquipamentoUpdateDTO usuarioDTO);
         Task UpdateLocal(int id, UpdateLocalDTO updateLocalDTO);
+        Task UpdateEstado(int id, UpdateEstadoEquipamentoDTO updateEstadoDTO);
         Task DeleteEquip(int id);
     }
 }

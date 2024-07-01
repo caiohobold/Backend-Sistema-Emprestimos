@@ -11,5 +11,6 @@ namespace EmprestimosAPI.Interfaces.Services
         Task<AssociacaoReadDTO> CreateAsync(AssociacaoCreateDTO associacaoDto);
         Task UpdateAsync(int id, AssociacaoUpdateDTO associacaoDto);
         Task DeleteAsync(int id);
+        Task ChangeAssocPassword(int id, string newPassword);
     }
 }

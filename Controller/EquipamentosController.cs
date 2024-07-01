@@ -1,6 +1,7 @@
 ﻿using EmprestimosAPI.DTO.Equipamento;
 using EmprestimosAPI.DTO.Local;
 using EmprestimosAPI.Interfaces.ServicesInterfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,7 +29,7 @@ namespace EmprestimosAPI.Controller
         public async Task<ActionResult> GetOnlyAvailable(int pageNumber, int pageSize)
         {
             var equipamentos = await _equipamentoService.GetAllAvailableEquip(pageNumber, pageSize);
-            if(equipamentos == null)
+            if (equipamentos == null)
             {
                 return NotFound("Nenhum equipamento disponível encontrado.");
             }
@@ -60,8 +61,9 @@ namespace EmprestimosAPI.Controller
             }
         }
 
+        [Authorize(Roles = "Associacao")]
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put (int id, [FromForm] EquipamentoUpdateDTO equipamentoDTO)
+        public async Task<ActionResult> Put(int id, [FromForm] EquipamentoUpdateDTO equipamentoDTO)
         {
             await _equipamentoService.UpdateEquip(id, equipamentoDTO);
             return Ok();
@@ -73,6 +75,24 @@ namespace EmprestimosAPI.Controller
             try
             {
                 await _equipamentoService.UpdateLocal(id, updateLocalDTO);
+                return Ok();
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpPatch("{id}/estado-equipamento")]
+        public async Task<ActionResult> UpdateEstado(int id, [FromBody] UpdateEstadoEquipamentoDTO updateEstadoDTO)
+        {
+            try
+            {
+                await _equipamentoService.UpdateEstado(id, updateEstadoDTO);
                 return Ok();
             }
             catch (ArgumentException ex)

@@ -30,6 +30,9 @@ namespace EmprestimosAPI.Services
             {
                 IdUsuario = a.IdUsuario,
                 NomeCompleto = a.NomeCompleto,
+                Endereco = a.Endereco,
+                Cpf = a.Cpf,
+                DataNascimento = a.DataNascimento,
                 EmailPessoal = a.EmailPessoal,
                 NumeroTelefone = a.NumeroTelefone,
                 SenhaHash = a.SenhaHash,
@@ -102,13 +105,8 @@ namespace EmprestimosAPI.Services
             usuario.NomeCompleto = usuarioDTO.NomeCompleto;
             usuario.NumeroTelefone = usuarioDTO.NumeroTelefone;
             usuario.EmailPessoal = usuarioDTO.EmailPessoal;
-            if (!string.IsNullOrEmpty(usuarioDTO.Senha))
-            {
-                usuario.SenhaHash = _hashingService.HashPassword(usuario, usuarioDTO.Senha);
-            }
             usuario.DataNascimento = usuarioDTO.DataNascimento;
             usuario.Endereco = usuarioDTO.Endereco;
-
             await _usuarioRepository.UpdateUser(usuario);
 
         }

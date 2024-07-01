@@ -1,4 +1,5 @@
 ﻿using EmprestimosAPI.DTO.Associacao;
+using EmprestimosAPI.DTO.Usuario;
 using EmprestimosAPI.Interfaces.Account;
 using EmprestimosAPI.Interfaces.RepositoriesInterfaces;
 using EmprestimosAPI.Interfaces.Services;
@@ -109,19 +110,19 @@ namespace EmprestimosAPI.Controller
             return NoContent();
         }
 
-        [Authorize]
+        [Authorize(Roles = "Associacao")]
         [HttpGet("me")]
         public async Task<ActionResult<AssociacaoReadDTO>> GetMyAssoc()
         {
             var assocIdClaim = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
 
-            if(string.IsNullOrEmpty(assocIdClaim) || int.TryParse(assocIdClaim, out int assocId))
+            if (string.IsNullOrEmpty(assocIdClaim) || !int.TryParse(assocIdClaim, out int assocId))
             {
                 return BadRequest("Invalid Token");
             }
 
             var assoc = await _service.GetByIdAsync(assocId);
-            if(assoc == null)
+            if (assoc == null)
             {
                 return NotFound("Assoc not found");
             }
@@ -133,9 +134,28 @@ namespace EmprestimosAPI.Controller
         [HttpPut("me")]
         public async Task<ActionResult> UpdateMyAssoc([FromBody] AssociacaoUpdateDTO associacaoDTO)
         {
-            var assocId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var assocIdClaim = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
+
+            if (string.IsNullOrEmpty(assocIdClaim) || !int.TryParse(assocIdClaim, out int assocId))
+            {
+                return BadRequest("Invalid Token");
+            }
+
             await _service.UpdateAsync(assocId, associacaoDTO);
-            return NoContent();
+            return Ok();
         }
+
+        [HttpPut("{id}/change-password")]
+        public async Task<ActionResult> ChangePassword(int id, [FromBody] ChangePasswordDTO changePasswordDTO)
+        {
+            if(changePasswordDTO == null || string.IsNullOrWhiteSpace(changePasswordDTO.NovaSenha))
+            {
+                return BadRequest("Senha inválida.");
+            }
+
+            await _service.ChangeAssocPassword(id, changePasswordDTO.NovaSenha);
+            return Ok();
+        }
+
     }
 }

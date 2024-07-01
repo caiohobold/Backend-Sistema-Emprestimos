@@ -44,7 +44,11 @@ namespace EmprestimosAPI.Services
                 IdAssociacao = associacao.IdAssociacao,
                 RazaoSocial = associacao.RazaoSocial,
                 NomeFantasia = associacao.NomeFantasia,
-                EmailProfissional = associacao.EmailProfissional
+                EmailProfissional = associacao.EmailProfissional,
+                Endereco = associacao.Endereco,
+                Numero_Telefone = associacao.NumeroTelefone,
+                senhaHash = associacao.Senha
+                
             };
         }
 
@@ -85,11 +89,8 @@ namespace EmprestimosAPI.Services
             associacao.NomeFantasia = associacaoDTO.NomeFantasia;
             associacao.NumeroTelefone = associacaoDTO.Numero_Telefone;
             associacao.EmailProfissional = associacaoDTO.EmailProfissional;
-            if (!string.IsNullOrEmpty(associacaoDTO.Senha))
-            {
-                associacao.Senha = _hashingService.HashAssocPassword(associacao, associacaoDTO.Senha);
-            }
             associacao.Endereco = associacaoDTO.Endereco;
+            associacao.RazaoSocial = associacaoDTO.RazaoSocial;
 
             await _repository.UpdateAssoc(associacao);
         }
@@ -101,6 +102,16 @@ namespace EmprestimosAPI.Services
                 throw new KeyNotFoundException("Associação not found");
 
             await _repository.DeleteAssoc(id);
+        }
+
+        public async Task ChangeAssocPassword(int id, string newPassword)
+        {
+            var assoc = await _repository.GetAssocById(id);
+            if(assoc != null)
+            {
+                assoc.Senha = _hashingService.HashAssocPassword(assoc, newPassword);
+                await _repository.UpdateAssoc(assoc);
+            }
         }
     }
 }
