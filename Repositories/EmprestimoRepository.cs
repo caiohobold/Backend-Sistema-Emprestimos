@@ -61,7 +61,8 @@ namespace EmprestimosAPI.Repositories
                 .Include(e => e.Pessoa)
                 .Include(e => e.Usuario)
                 .Include(e => e.Equipamento)
-                .Where(e => e.Status == 0);
+                .Where(e => e.Status == 0)
+                .OrderBy(e => e.DataDevolucaoEmprestimo);
 
             var count = await query.CountAsync();
             var items = await query.Skip((pageNumber - 1) * pageSize)
