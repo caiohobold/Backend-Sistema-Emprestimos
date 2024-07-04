@@ -18,6 +18,7 @@ namespace EmprestimosAPI.Controller
             _equipamentoService = equipamentoService;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<EquipamentoReadDTO>>> GetAll(int pageNumber, int pageSize)
         {
@@ -25,6 +26,7 @@ namespace EmprestimosAPI.Controller
             return Ok(equipamentos);
         }
 
+        [Authorize]
         [HttpGet("available")]
         public async Task<ActionResult> GetOnlyAvailable(int pageNumber, int pageSize)
         {
@@ -36,6 +38,7 @@ namespace EmprestimosAPI.Controller
             return Ok(equipamentos);
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<EquipamentoReadDTO>> GetById(int id)
         {
@@ -47,6 +50,7 @@ namespace EmprestimosAPI.Controller
             return Ok(equipamento);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<EquipamentoReadDTO>> Post([FromForm] EquipamentoCreateDTO equipamentoDTO)
         {
@@ -87,6 +91,7 @@ namespace EmprestimosAPI.Controller
             }
         }
 
+        [Authorize]
         [HttpPatch("{id}/estado-equipamento")]
         public async Task<ActionResult> UpdateEstado(int id, [FromBody] UpdateEstadoEquipamentoDTO updateEstadoDTO)
         {
@@ -105,6 +110,7 @@ namespace EmprestimosAPI.Controller
             }
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {

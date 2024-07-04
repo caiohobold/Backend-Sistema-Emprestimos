@@ -26,6 +26,7 @@ namespace EmprestimosAPI.Controller
             _authenticateService = authenticateService;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AssociacaoReadDTO>>> Get(int pageNumber, int pageSize)
         {
@@ -33,6 +34,7 @@ namespace EmprestimosAPI.Controller
             return Ok(associacoes);
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<AssociacaoReadDTO>> GetById(int id)
         {
@@ -44,6 +46,7 @@ namespace EmprestimosAPI.Controller
             return Ok(associacao);
         }
 
+        [Authorize]
         [HttpPost("register")]
         public async Task<ActionResult<UserToken>> Post(AssociacaoCreateDTO associacaoDTO)
         {
@@ -96,6 +99,7 @@ namespace EmprestimosAPI.Controller
         }
 
 
+        [Authorize(Roles = "Associacao")]
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, AssociacaoUpdateDTO associacaoDto)
         {
@@ -103,6 +107,7 @@ namespace EmprestimosAPI.Controller
             return Ok();
         }
 
+        [Authorize(Roles = "Associacao")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
@@ -130,7 +135,7 @@ namespace EmprestimosAPI.Controller
             return Ok(assoc);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Associacao")]
         [HttpPut("me")]
         public async Task<ActionResult> UpdateMyAssoc([FromBody] AssociacaoUpdateDTO associacaoDTO)
         {
@@ -145,6 +150,7 @@ namespace EmprestimosAPI.Controller
             return Ok();
         }
 
+        [Authorize(Roles = "Associacao")]
         [HttpPut("{id}/change-password")]
         public async Task<ActionResult> ChangePassword(int id, [FromBody] ChangePasswordDTO changePasswordDTO)
         {

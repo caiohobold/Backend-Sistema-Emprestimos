@@ -32,6 +32,7 @@ namespace EmprestimosAPI.Controller
             return Ok(users);
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<UsuarioReadDTO>> GetById(int id)
         {
@@ -95,6 +96,7 @@ namespace EmprestimosAPI.Controller
             return new UserToken { Token = token };
         }
 
+        [Authorize(Roles = "Associacao")]
         [HttpPut("{id}")]
         public async Task<ActionResult> Put (int id, UsuarioUpdateDTO usuarioDTO)
         {
@@ -103,6 +105,7 @@ namespace EmprestimosAPI.Controller
 
         }
 
+        [Authorize(Roles = "Associacao")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
@@ -140,6 +143,7 @@ namespace EmprestimosAPI.Controller
             return NoContent();
         }
 
+        [Authorize(Roles = "Associacao")]
         [HttpPut("{id}/change-password")]
         public async Task<ActionResult> ChangePassword(int id, [FromBody] ChangePasswordDTO changePasswordDTO)
         {

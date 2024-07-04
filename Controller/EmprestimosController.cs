@@ -1,5 +1,6 @@
 ﻿using EmprestimosAPI.DTO.Emprestimo;
 using EmprestimosAPI.Interfaces.ServicesInterfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +17,7 @@ namespace EmprestimosAPI.Controller
             _emprestimoService = emprestimoService;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<EmprestimoReadDTO>>> GetAll(int pageNumber, int pageSize)
         {
@@ -23,6 +25,7 @@ namespace EmprestimosAPI.Controller
             return Ok(emprestimos);
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<EmprestimoReadDTO>> GetById(int id)
         {
@@ -34,6 +37,7 @@ namespace EmprestimosAPI.Controller
             return Ok(emprestimo);
         }
 
+        [Authorize]
         [HttpGet("pessoa/{idPessoa}")]
         public async Task<ActionResult<IEnumerable<EmprestimoReadDTO>>> GetEmpByPessoaId(int idPessoa)
         {
@@ -45,6 +49,7 @@ namespace EmprestimosAPI.Controller
             return Ok(emprestimos);
         }
 
+        [Authorize]
         [HttpGet("active")]
         public async Task<ActionResult> GetOnlyActive(int pageNumber, int pageSize)
         {
@@ -56,6 +61,7 @@ namespace EmprestimosAPI.Controller
             return Ok(emprestimos);
         }
 
+        [Authorize]
         [HttpGet("atrasados")]
         public async Task<ActionResult<IEnumerable<EmprestimoReadDTO>>> GetEmprestimosAtrasados()
         {
@@ -63,6 +69,7 @@ namespace EmprestimosAPI.Controller
             return Ok(emprestimos);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<EmprestimoReadDTO>> Post(EmprestimoCreateDTO emprestimoDTO)
         {
@@ -71,6 +78,7 @@ namespace EmprestimosAPI.Controller
             return CreatedAtAction(nameof(GetById), new { Id = emprestimoReadDto.Id }, emprestimoReadDto);
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, EmprestimoUpdateDTO emprestimoDTO)
         {
@@ -78,6 +86,7 @@ namespace EmprestimosAPI.Controller
             return Ok();
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
@@ -85,6 +94,7 @@ namespace EmprestimosAPI.Controller
             return NoContent();
         }
 
+        [Authorize]
         [HttpPost("{id}/finalizar")]
         public async Task<ActionResult> FinalizarEmprestimo(int id)
         {

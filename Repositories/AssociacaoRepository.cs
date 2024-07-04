@@ -20,7 +20,6 @@ namespace EmprestimosAPI.Repositories
             var query = _context.Associacoes.AsQueryable();
 
             return await PagedList<Associacao>.CreateAsync(query, pageNumber, pageSize);
-            //return await _context.Associacoes.ToListAsync();
         }
 
         public async Task<Associacao> GetAssocById(int id)

@@ -17,6 +17,7 @@ namespace EmprestimosAPI.Controller
             _pessoaService = pessoaService;
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PessoaReadDTO>>> Get(int pageNumber, int pageSize)
         {
@@ -24,6 +25,7 @@ namespace EmprestimosAPI.Controller
             return Ok(pessoas);
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<PessoaReadDTO>> GetById(int id)
         {
@@ -42,6 +44,7 @@ namespace EmprestimosAPI.Controller
             return CreatedAtAction(nameof(GetById), new { Id = pessoaReadDto.IdPessoa }, pessoaReadDto);
         }
 
+        [Authorize(Roles = "Associacao, Usuario")]
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, PessoaUpdateDTO pessoaDTO)
         {
@@ -49,6 +52,7 @@ namespace EmprestimosAPI.Controller
             return Ok();
         }
 
+        [Authorize(Roles = "Associacao, Usuario")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {

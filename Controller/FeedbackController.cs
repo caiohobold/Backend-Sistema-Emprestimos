@@ -1,5 +1,6 @@
 ﻿using EmprestimosAPI.DTO.Feedback;
 using EmprestimosAPI.Interfaces.ServicesInterfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +17,7 @@ namespace EmprestimosAPI.Controller
             _feedbackService = feedbackService;
         }
 
+        [Authorize]
         [HttpPost("report-error")]
         public async Task<IActionResult> ReportError([FromBody] FeedbackModel feedback)
         {
@@ -28,6 +30,7 @@ namespace EmprestimosAPI.Controller
             return Ok();
         }
 
+        [Authorize]
         [HttpPost("send-feedback")]
         public async Task<IActionResult> SendFeedback([FromBody] FeedbackModel feedback)
         {

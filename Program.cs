@@ -13,6 +13,8 @@ using System.Runtime;
 using System.Text;
 using EmprestimosAPI.Interfaces.Account;
 using EmprestimosAPI.Token;
+using EmprestimosAPI.Helpers;
+using Microsoft.AspNetCore.Hosting;
 
 namespace EmprestimosAPI
 {
@@ -93,7 +95,6 @@ namespace EmprestimosAPI
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -120,5 +121,19 @@ namespace EmprestimosAPI
 
             app.Run();
         }
+
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((context, config) =>
+                {
+                    var env = context.HostingEnvironment;
+                    config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                      .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
+                      .AddEnvironmentVariables();
+                })
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
     }
 }
