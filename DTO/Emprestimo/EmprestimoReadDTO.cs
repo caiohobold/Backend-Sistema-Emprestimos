@@ -13,5 +13,7 @@
         public DateTime DataDevolucao { get; set; }
         public int Status { get; set; }
         public int IdUsuario { get; set; }
+        public int idAssociacao { get; set; }
+
     }
 }

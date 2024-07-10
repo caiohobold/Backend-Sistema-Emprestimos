@@ -87,6 +87,10 @@ namespace EmprestimosAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("IdCategoria"));
 
+                    b.Property<int>("IdAssociacao")
+                        .HasColumnType("integer")
+                        .HasColumnName("idassociacao");
+
                     b.Property<string>("NomeCategoria")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -94,6 +98,8 @@ namespace EmprestimosAPI.Migrations
                         .HasColumnName("nome_categoria");
 
                     b.HasKey("IdCategoria");
+
+                    b.HasIndex("IdAssociacao");
 
                     b.ToTable("Categorias");
                 });
@@ -115,6 +121,10 @@ namespace EmprestimosAPI.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("data_emprestimo");
 
+                    b.Property<int>("IdAssociacao")
+                        .HasColumnType("integer")
+                        .HasColumnName("idassociacao");
+
                     b.Property<int>("IdEquipamento")
                         .HasColumnType("integer")
                         .HasColumnName("IdEquipamento");
@@ -132,6 +142,8 @@ namespace EmprestimosAPI.Migrations
                         .HasColumnName("status");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("IdAssociacao");
 
                     b.HasIndex("IdEquipamento");
 
@@ -175,6 +187,10 @@ namespace EmprestimosAPI.Migrations
                         .HasColumnType("bytea")
                         .HasColumnName("foto2_equipamento");
 
+                    b.Property<int>("IdAssociacao")
+                        .HasColumnType("integer")
+                        .HasColumnName("idassociacao");
+
                     b.Property<int>("IdCategoria")
                         .HasColumnType("integer")
                         .HasColumnName("id_categoria");
@@ -190,6 +206,8 @@ namespace EmprestimosAPI.Migrations
                         .HasColumnName("nome_equipamento");
 
                     b.HasKey("IdEquipamento");
+
+                    b.HasIndex("IdAssociacao");
 
                     b.HasIndex("IdCategoria");
 
@@ -209,6 +227,10 @@ namespace EmprestimosAPI.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("IdAssociacao")
+                        .HasColumnType("integer")
+                        .HasColumnName("idassociacao");
+
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasColumnType("text");
@@ -223,6 +245,8 @@ namespace EmprestimosAPI.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("IdAssociacao");
+
                     b.ToTable("Feedbacks");
                 });
 
@@ -235,6 +259,10 @@ namespace EmprestimosAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("IdLocal"));
 
+                    b.Property<int>("IdAssociacao")
+                        .HasColumnType("integer")
+                        .HasColumnName("idassociacao");
+
                     b.Property<string>("NomeLocal")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -242,6 +270,8 @@ namespace EmprestimosAPI.Migrations
                         .HasColumnName("nome_local");
 
                     b.HasKey("IdLocal");
+
+                    b.HasIndex("IdAssociacao");
 
                     b.ToTable("Locais");
                 });
@@ -279,6 +309,10 @@ namespace EmprestimosAPI.Migrations
                         .HasColumnType("character varying(600)")
                         .HasColumnName("endereco");
 
+                    b.Property<int>("IdAssociacao")
+                        .HasColumnType("integer")
+                        .HasColumnName("idassociacao");
+
                     b.Property<string>("NomeCompleto")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -292,6 +326,8 @@ namespace EmprestimosAPI.Migrations
                         .HasColumnName("telefone");
 
                     b.HasKey("IdPessoa");
+
+                    b.HasIndex("IdAssociacao");
 
                     b.ToTable("Pessoas");
                 });
@@ -356,8 +392,25 @@ namespace EmprestimosAPI.Migrations
                     b.ToTable("Usuarios", (string)null);
                 });
 
+            modelBuilder.Entity("EmprestimosAPI.Models.Categoria", b =>
+                {
+                    b.HasOne("EmprestimosAPI.Models.Associacao", "Associacao")
+                        .WithMany()
+                        .HasForeignKey("IdAssociacao")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Associacao");
+                });
+
             modelBuilder.Entity("EmprestimosAPI.Models.Emprestimo", b =>
                 {
+                    b.HasOne("EmprestimosAPI.Models.Associacao", "Associacao")
+                        .WithMany()
+                        .HasForeignKey("IdAssociacao")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("EmprestimosAPI.Models.Equipamento", "Equipamento")
                         .WithMany()
                         .HasForeignKey("IdEquipamento")
@@ -376,6 +429,8 @@ namespace EmprestimosAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Associacao");
+
                     b.Navigation("Equipamento");
 
                     b.Navigation("Pessoa");
@@ -385,6 +440,12 @@ namespace EmprestimosAPI.Migrations
 
             modelBuilder.Entity("EmprestimosAPI.Models.Equipamento", b =>
                 {
+                    b.HasOne("EmprestimosAPI.Models.Associacao", "Associacao")
+                        .WithMany()
+                        .HasForeignKey("IdAssociacao")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("EmprestimosAPI.Models.Categoria", "Categoria")
                         .WithMany()
                         .HasForeignKey("IdCategoria")
@@ -397,9 +458,44 @@ namespace EmprestimosAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Associacao");
+
                     b.Navigation("Categoria");
 
                     b.Navigation("Local");
+                });
+
+            modelBuilder.Entity("EmprestimosAPI.Models.Feedback", b =>
+                {
+                    b.HasOne("EmprestimosAPI.Models.Associacao", "Associacao")
+                        .WithMany()
+                        .HasForeignKey("IdAssociacao")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Associacao");
+                });
+
+            modelBuilder.Entity("EmprestimosAPI.Models.Local", b =>
+                {
+                    b.HasOne("EmprestimosAPI.Models.Associacao", "Associacao")
+                        .WithMany()
+                        .HasForeignKey("IdAssociacao")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Associacao");
+                });
+
+            modelBuilder.Entity("EmprestimosAPI.Models.Pessoa", b =>
+                {
+                    b.HasOne("EmprestimosAPI.Models.Associacao", "Associacao")
+                        .WithMany()
+                        .HasForeignKey("IdAssociacao")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Associacao");
                 });
 
             modelBuilder.Entity("EmprestimosAPI.Models.Usuario", b =>

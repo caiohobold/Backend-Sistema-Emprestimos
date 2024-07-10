@@ -22,7 +22,15 @@ namespace EmprestimosAPI.Controller
         [HttpGet]
         public async Task<ActionResult<IEnumerable<EquipamentoReadDTO>>> GetAll(int pageNumber, int pageSize)
         {
-            var equipamentos = await _equipamentoService.GetAllEquip(pageNumber, pageSize);
+            var idAssociacaoClaim = User.Claims.FirstOrDefault(c => c.Type == "idAssoc");
+            if(idAssociacaoClaim == null)
+            {
+                return Unauthorized("ID da associação não encontrado no token.");
+            }
+
+            int idAssociacao = int.Parse(idAssociacaoClaim.Value);
+
+            var equipamentos = await _equipamentoService.GetAllEquip(pageNumber, pageSize, idAssociacao);
             return Ok(equipamentos);
         }
 
@@ -30,7 +38,14 @@ namespace EmprestimosAPI.Controller
         [HttpGet("available")]
         public async Task<ActionResult> GetOnlyAvailable(int pageNumber, int pageSize)
         {
-            var equipamentos = await _equipamentoService.GetAllAvailableEquip(pageNumber, pageSize);
+            var idAssociacaoClaim = User.Claims.FirstOrDefault(c => c.Type == "idAssoc");
+            if (idAssociacaoClaim == null)
+            {
+                return Unauthorized("ID da associação não encontrado no token.");
+            }
+
+            int idAssociacao = int.Parse(idAssociacaoClaim.Value);
+            var equipamentos = await _equipamentoService.GetAllAvailableEquip(pageNumber, pageSize, idAssociacao);
             if (equipamentos == null)
             {
                 return NotFound("Nenhum equipamento disponível encontrado.");
@@ -42,7 +57,14 @@ namespace EmprestimosAPI.Controller
         [HttpGet("{id}")]
         public async Task<ActionResult<EquipamentoReadDTO>> GetById(int id)
         {
-            var equipamento = await _equipamentoService.GetEquipById(id);
+            var idAssociacaoClaim = User.Claims.FirstOrDefault(c => c.Type == "idAssoc");
+            if (idAssociacaoClaim == null)
+            {
+                return Unauthorized("ID da associação não encontrado no token.");
+            }
+
+            int idAssociacao = int.Parse(idAssociacaoClaim.Value);
+            var equipamento = await _equipamentoService.GetEquipById(id, idAssociacao);
             if (equipamento == null)
             {
                 return NotFound();
@@ -54,6 +76,14 @@ namespace EmprestimosAPI.Controller
         [HttpPost]
         public async Task<ActionResult<EquipamentoReadDTO>> Post([FromForm] EquipamentoCreateDTO equipamentoDTO)
         {
+            var idAssociacaoClaim = User.Claims.FirstOrDefault(c => c.Type == "idAssoc");
+            if (idAssociacaoClaim == null)
+            {
+                return Unauthorized("ID da associação não encontrado no token.");
+            }
+
+            int idAssociacao = int.Parse(idAssociacaoClaim.Value);
+            equipamentoDTO.idAssociacao = idAssociacao;
             try
             {
                 var equipamentoReadDto = await _equipamentoService.AddEquip(equipamentoDTO);
@@ -69,6 +99,14 @@ namespace EmprestimosAPI.Controller
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromForm] EquipamentoUpdateDTO equipamentoDTO)
         {
+            var idAssociacaoClaim = User.Claims.FirstOrDefault(c => c.Type == "idAssoc");
+            if (idAssociacaoClaim == null)
+            {
+                return Unauthorized("ID da associação não encontrado no token.");
+            }
+
+            int idAssociacao = int.Parse(idAssociacaoClaim.Value);
+            equipamentoDTO.idAssociacao = idAssociacao;
             await _equipamentoService.UpdateEquip(id, equipamentoDTO);
             return Ok();
         }
@@ -76,9 +114,16 @@ namespace EmprestimosAPI.Controller
         [HttpPatch("{id}/local")]
         public async Task<ActionResult> UpdateLocal(int id, [FromBody] UpdateLocalDTO updateLocalDTO)
         {
+            var idAssociacaoClaim = User.Claims.FirstOrDefault(c => c.Type == "idAssoc");
+            if (idAssociacaoClaim == null)
+            {
+                return Unauthorized("ID da associação não encontrado no token.");
+            }
+
+            int idAssociacao = int.Parse(idAssociacaoClaim.Value);
             try
             {
-                await _equipamentoService.UpdateLocal(id, updateLocalDTO);
+                await _equipamentoService.UpdateLocal(id, updateLocalDTO, idAssociacao);
                 return Ok();
             }
             catch (ArgumentException ex)
@@ -95,9 +140,16 @@ namespace EmprestimosAPI.Controller
         [HttpPatch("{id}/estado-equipamento")]
         public async Task<ActionResult> UpdateEstado(int id, [FromBody] UpdateEstadoEquipamentoDTO updateEstadoDTO)
         {
+            var idAssociacaoClaim = User.Claims.FirstOrDefault(c => c.Type == "idAssoc");
+            if (idAssociacaoClaim == null)
+            {
+                return Unauthorized("ID da associação não encontrado no token.");
+            }
+
+            int idAssociacao = int.Parse(idAssociacaoClaim.Value);
             try
             {
-                await _equipamentoService.UpdateEstado(id, updateEstadoDTO);
+                await _equipamentoService.UpdateEstado(id, updateEstadoDTO, idAssociacao);
                 return Ok();
             }
             catch (ArgumentException ex)
@@ -114,7 +166,14 @@ namespace EmprestimosAPI.Controller
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            await _equipamentoService.DeleteEquip(id);
+            var idAssociacaoClaim = User.Claims.FirstOrDefault(c => c.Type == "idAssoc");
+            if (idAssociacaoClaim == null)
+            {
+                return Unauthorized("ID da associação não encontrado no token.");
+            }
+
+            int idAssociacao = int.Parse(idAssociacaoClaim.Value);
+            await _equipamentoService.DeleteEquip(id, idAssociacao);
             return NoContent();
         }
     }

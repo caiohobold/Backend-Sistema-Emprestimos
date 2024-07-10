@@ -5,14 +5,14 @@ namespace EmprestimosAPI.Interfaces.ServicesInterfaces
 {
     public interface IEmprestimoService
     {
-        Task<IEnumerable<EmprestimoReadDTO>> GetAllEmp(int pageNumber, int pageSize);
-        Task<EmprestimoReadDTO> GetEmpById(int id);
-        Task<IEnumerable<EmprestimoReadDTO>> GetEmpByPessoaId(int idPessoa);
-        Task<IEnumerable<EmprestimoReadDTO>> GetActiveEmp(int pageNumber, int pageSize);
-        Task<IEnumerable<EmprestimoReadDTO>> GetEmpAtrasados(); 
-        Task<EmprestimoReadDTO> AddEmp(EmprestimoCreateDTO emprestimoDTO);
-        Task UpdateEmp(int id, EmprestimoUpdateDTO emprestimoDTO);
-        Task DeleteEmp(int id);
-        Task FinalizarEmp(int id);
+        Task<IEnumerable<EmprestimoReadDTO>> GetAllEmp(int pageNumber, int pageSize, int idAssociacao);
+        Task<EmprestimoReadDTO> GetEmpById(int id, int idAssociacao);
+        Task<IEnumerable<EmprestimoReadDTO>> GetEmpByPessoaId(int idPessoa, int idAssociacao);
+        Task<IEnumerable<EmprestimoReadDTO>> GetActiveEmp(int pageNumber, int pageSize, int idAssociacao);
+        Task<IEnumerable<EmprestimoReadDTO>> GetEmpAtrasados(int idAssociacao);
+        Task<EmprestimoReadDTO> AddEmp(EmprestimoCreateDTO emprestimoDTO, int idAssociacao);
+        Task UpdateEmp(int id, EmprestimoUpdateDTO emprestimoDTO, int idAssociacao);
+        Task DeleteEmp(int id, int idAssociacao);
+        Task FinalizarEmp(int id, int idAssociacao);
     }
 }

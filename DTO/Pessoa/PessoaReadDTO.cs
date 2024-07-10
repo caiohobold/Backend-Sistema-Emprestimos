@@ -13,5 +13,6 @@ namespace EmprestimosAPI.DTO.Pessoa
         public string Endereco { get; set; }
         public int StatusEmprestimo { get; set; }
         public DateTime? DataEmprestimo { get; set; }
+        public int idAssociacao { get; set; }
     }
 }

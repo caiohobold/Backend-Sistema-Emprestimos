@@ -14,7 +14,14 @@ namespace EmprestimosAPI.Models
         [Column("nome_local")]
         public string NomeLocal { get; set; }
 
-        public ICollection<Equipamento> Equipamentos { get; set; } 
+        public ICollection<Equipamento> Equipamentos { get; set; }
+
+        [Required]
+        [Column("idassociacao")]
+        public int IdAssociacao { get; set; }
+
+        [ForeignKey("IdAssociacao")]
+        public Associacao Associacao { get; set; }
 
     }
 }

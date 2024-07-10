@@ -68,7 +68,7 @@ namespace EmprestimosAPI.Token
             return true;
         }
 
-        public string GenerateToken(int id, string email, string user, string role)
+        public string GenerateToken(int id, string user, string email, string role, int idAssoc, string nomeFantasia)
         {
             var claims = new[]
             {
@@ -76,6 +76,8 @@ namespace EmprestimosAPI.Token
                 new Claim("user", user),
                 new Claim("email", email),
                 new Claim("role", role),
+                new Claim("idAssoc", idAssoc.ToString()),
+                new Claim("nomeFantasiaAssoc", nomeFantasia),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
             var privateKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["jwt:secretKey"]));

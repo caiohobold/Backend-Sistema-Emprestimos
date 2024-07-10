@@ -18,9 +18,10 @@ namespace EmprestimosAPI.Repositories
             _context = context;
         }
 
-        public async Task<PagedList<EquipamentoReadDTO>> GetAllEquip(int pageNumber, int pageSize)
+        public async Task<PagedList<EquipamentoReadDTO>> GetAllEquip(int pageNumber, int pageSize, int idAssociacao)
         {
             var query = _context.Equipamentos
+                .Where(p => p.IdAssociacao == idAssociacao)
                 .Select(e => new EquipamentoReadDTO
                 {
                     IdEquipamento = e.IdEquipamento,
@@ -31,6 +32,7 @@ namespace EmprestimosAPI.Repositories
                     CargaEquipamento = e.CargaEquipamento,
                     DescricaoEquipamento = e.DescricaoEquipamento,
                     IdLocal = e.IdLocal,
+                    idAssociacao = e.IdAssociacao,
                     Foto1 = e.Foto1 != null ? Convert.ToBase64String(e.Foto1) : null,
                     Foto2 = e.Foto2 != null ? Convert.ToBase64String(e.Foto2) : null,
                     StatusEquipamento = _context.Emprestimos
@@ -47,13 +49,12 @@ namespace EmprestimosAPI.Repositories
                 .ToListAsync();
 
             return new PagedList<EquipamentoReadDTO>(items, count, pageNumber, pageSize);
-            //return await _context.Equipamentos.Include(e => e.Categoria).ToListAsync();
         }
 
-        public async Task<PagedList<Equipamento>> GetAllAvailableEquip(int pageNumber, int pageSize)
+        public async Task<PagedList<Equipamento>> GetAllAvailableEquip(int pageNumber, int pageSize, int idAssociacao)
         {
             var query = _context.Equipamentos
-                .Where(e => !_context.Emprestimos.Any(emp => emp.IdEquipamento == e.IdEquipamento && emp.Status == 0) && e.EstadoEquipamento != 2 && e.EstadoEquipamento != 3)
+                .Where(e => !_context.Emprestimos.Any(emp => emp.IdEquipamento == e.IdEquipamento && emp.Status == 0) && e.EstadoEquipamento != 2 && e.EstadoEquipamento != 3 && e.IdAssociacao == idAssociacao)
                 .Include(e => e.Categoria);
 
             var count = await query.CountAsync();
@@ -64,9 +65,10 @@ namespace EmprestimosAPI.Repositories
             return new PagedList<Equipamento>(items, count, pageNumber, pageSize);
         }
 
-        public async Task<Equipamento> GetEquipById(int id)
+        public async Task<Equipamento> GetEquipById(int id, int idAssociacao)
         {
             var equipamento = await _context.Equipamentos
+                                .Where(e => e.IdEquipamento == id && e.IdAssociacao == idAssociacao)
                                 .Include(e => e.Categoria)
                                 .Include(e => e.Local)
                                 .FirstOrDefaultAsync(e => e.IdEquipamento == id);
@@ -74,30 +76,42 @@ namespace EmprestimosAPI.Repositories
             return equipamento;
         }
 
-        public async Task<Equipamento> AddEquip(Equipamento equipamento)
+        public async Task<Equipamento> AddEquip(Equipamento equipamento, int idAssociacao)
         {
+            equipamento.IdAssociacao = idAssociacao;
             _context.Equipamentos.Add(equipamento);
             await _context.SaveChangesAsync();
             return equipamento;
         }
 
-        public async Task UpdateEquip(Equipamento equipamento)
+        public async Task UpdateEquip(Equipamento equipamento, int idAssociacao)
         {
-            _context.Entry(equipamento).State = EntityState.Modified;
+            var existingEquip = await _context.Equipamentos
+                .Where(e => e.IdEquipamento == equipamento.IdEquipamento && e.IdAssociacao == idAssociacao)
+                .SingleOrDefaultAsync();
+
+            if (existingEquip == null)
+            {
+                throw new KeyNotFoundException("Equipamento não encontrado ou não pertence à associação.");
+            }
+
+            _context.Entry(existingEquip).CurrentValues.SetValues(equipamento);
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteEquip(int id)
+        public async Task DeleteEquip(int id, int idAssociacao)
         {
-            var equipamento = await _context.Equipamentos.FindAsync(id);
+            var equipamento = await _context.Equipamentos
+                .Where(e => e.IdEquipamento == id && e.IdAssociacao == idAssociacao)
+                .SingleOrDefaultAsync();
 
             if(equipamento == null)
             {
-                throw new KeyNotFoundException("Equipamento não encontrado.");
+                throw new KeyNotFoundException("Equipamento não encontrado ou não pertence à associação.");
             }
 
             var emprestimosAtivos = await _context.Emprestimos
-                                        .Where(e => e.IdEquipamento == id && e.Status == 0)
+                                        .Where(e => e.IdEquipamento == id && e.Status == 0 && e.IdAssociacao == idAssociacao)
                                         .AnyAsync();
 
             if (emprestimosAtivos)

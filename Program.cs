@@ -52,11 +52,6 @@ namespace EmprestimosAPI
                     .AllowAnyMethod());
             });
 
-            builder.Configuration
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
-                .AddEnvironmentVariables();
-
             builder.Services.AddControllers();
 
             builder.Services.AddEndpointsApiExplorer();

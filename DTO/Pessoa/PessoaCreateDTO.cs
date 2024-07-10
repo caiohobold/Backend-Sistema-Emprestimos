@@ -8,5 +8,6 @@
         public string Telefone { get; set; }
         public string Descricao { get; set; }
         public string Endereco { get; set; }
+        public int idAssociacao { get; set; }
     }
 }

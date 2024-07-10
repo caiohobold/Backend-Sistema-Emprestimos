@@ -20,9 +20,9 @@ namespace EmprestimosAPI.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<EquipamentoReadDTO>> GetAllEquip(int pageNumber, int pageSize)
+        public async Task<IEnumerable<EquipamentoReadDTO>> GetAllEquip(int pageNumber, int pageSize, int idAssociacao)
         {
-            var equipamentos = await _equipamentoRepository.GetAllEquip(pageNumber, pageSize);
+            var equipamentos = await _equipamentoRepository.GetAllEquip(pageNumber, pageSize, idAssociacao);
             return equipamentos.Select(e => new EquipamentoReadDTO
             {
                 IdEquipamento = e.IdEquipamento,
@@ -36,14 +36,15 @@ namespace EmprestimosAPI.Services
                 Foto2 = e.Foto2,
                 StatusEquipamento = e.StatusEquipamento,
                 IdLocal = e.IdLocal,
-                NomeLocal = e.NomeLocal
+                NomeLocal = e.NomeLocal,
+                idAssociacao = e.idAssociacao
             }).ToList();
         }
 
 
-        public async Task<IEnumerable<EquipamentoReadDTO>> GetAllAvailableEquip(int pageNumber, int pageSize)
+        public async Task<IEnumerable<EquipamentoReadDTO>> GetAllAvailableEquip(int pageNumber, int pageSize, int idAssociacao)
         {
-            var equipamentos = await _equipamentoRepository.GetAllAvailableEquip(pageNumber, pageSize);
+            var equipamentos = await _equipamentoRepository.GetAllAvailableEquip(pageNumber, pageSize, idAssociacao);
             return equipamentos.Select(e => new EquipamentoReadDTO
             {
                 IdEquipamento = e.IdEquipamento,
@@ -55,13 +56,14 @@ namespace EmprestimosAPI.Services
                 DescricaoEquipamento = e.DescricaoEquipamento,
                 IdLocal = e.IdLocal,
                 Foto1 = e.Foto1 != null ? Convert.ToBase64String(e.Foto1) : null,
-                Foto2 = e.Foto2 != null ? Convert.ToBase64String(e.Foto2) : null
+                Foto2 = e.Foto2 != null ? Convert.ToBase64String(e.Foto2) : null,
+                idAssociacao = e.IdAssociacao
             }).ToList();
         }
 
-        public async Task<EquipamentoReadDTO> GetEquipById(int id)
+        public async Task<EquipamentoReadDTO> GetEquipById(int id, int idAssociacao)
         {
-            var equipamento = await _equipamentoRepository.GetEquipById(id);
+            var equipamento = await _equipamentoRepository.GetEquipById(id, idAssociacao);
             if (equipamento == null) return null;
 
             return new EquipamentoReadDTO
@@ -76,7 +78,8 @@ namespace EmprestimosAPI.Services
                 IdLocal = equipamento.IdLocal,
                 NomeLocal = equipamento.Local.NomeLocal,
                 Foto1 = equipamento.Foto1 != null ? Convert.ToBase64String(equipamento.Foto1) : null,
-                Foto2 = equipamento.Foto2 != null ? Convert.ToBase64String(equipamento.Foto2) : null
+                Foto2 = equipamento.Foto2 != null ? Convert.ToBase64String(equipamento.Foto2) : null,
+                idAssociacao = equipamento.IdAssociacao
             };
         }
 
@@ -89,7 +92,8 @@ namespace EmprestimosAPI.Services
                 EstadoEquipamento = equipamentoDTO.EstadoEquipamento,
                 CargaEquipamento = equipamentoDTO.CargaEquipamento,
                 DescricaoEquipamento = equipamentoDTO.DescricaoEquipamento,
-                IdLocal = equipamentoDTO.IdLocal
+                IdLocal = equipamentoDTO.IdLocal,
+                IdAssociacao = equipamentoDTO.idAssociacao
             };
 
             if (equipamentoDTO.Foto1 != null)
@@ -110,7 +114,7 @@ namespace EmprestimosAPI.Services
                 }
             }
 
-            var newEquipamento = await _equipamentoRepository.AddEquip(equipamento);
+            var newEquipamento = await _equipamentoRepository.AddEquip(equipamento, equipamentoDTO.idAssociacao);
 
             if (newEquipamento.Categoria == null)
             {
@@ -133,13 +137,14 @@ namespace EmprestimosAPI.Services
                 Foto1 = newEquipamento.Foto1 != null ? Convert.ToBase64String(newEquipamento.Foto1) : null,
                 Foto2 = newEquipamento.Foto2 != null ? Convert.ToBase64String(newEquipamento.Foto2) : null,
                 IdLocal = newEquipamento.IdLocal,
-                NomeLocal = newEquipamento.Local.NomeLocal
+                NomeLocal = newEquipamento.Local.NomeLocal,
+                idAssociacao = newEquipamento.IdAssociacao
             };
         }
 
         public async Task UpdateEquip(int id, EquipamentoUpdateDTO equipamentoDTO)
         {
-            var equipamento = await _equipamentoRepository.GetEquipById(id);
+            var equipamento = await _equipamentoRepository.GetEquipById(id, equipamentoDTO.idAssociacao);
             if(equipamento == null)
             {
                 throw new KeyNotFoundException("Equipamento Not Found");
@@ -150,6 +155,7 @@ namespace EmprestimosAPI.Services
             equipamento.CargaEquipamento = equipamentoDTO.CargaEquipamento;
             equipamento.DescricaoEquipamento = equipamentoDTO.DescricaoEquipamento;
             equipamento.IdLocal = equipamentoDTO.IdLocal;
+            equipamento.IdAssociacao = equipamentoDTO.idAssociacao;
             
             if(equipamentoDTO.Foto1 != null)
             {
@@ -169,43 +175,43 @@ namespace EmprestimosAPI.Services
                 }
             }
 
-            await _equipamentoRepository.UpdateEquip(equipamento);
+            await _equipamentoRepository.UpdateEquip(equipamento, equipamentoDTO.idAssociacao);
         }
 
-        public async Task UpdateLocal(int id, UpdateLocalDTO updateLocalDTO)
+        public async Task UpdateLocal(int id, UpdateLocalDTO updateLocalDTO, int idAssociacao)
         {
-            var equipamento = await _equipamentoRepository.GetEquipById(id);
-            if(equipamento == null)
+            var equipamento = await _equipamentoRepository.GetEquipById(id, idAssociacao);
+            if (equipamento == null)
             {
                 throw new KeyNotFoundException("Equipamento não encontrado");
             }
 
             equipamento.IdLocal = updateLocalDTO.IdLocal;
-            await _equipamentoRepository.UpdateEquip(equipamento);
+            await _equipamentoRepository.UpdateEquip(equipamento, idAssociacao);
         }
 
-        public async Task UpdateEstado(int id, UpdateEstadoEquipamentoDTO updateEstadoDTO)
+        public async Task UpdateEstado(int id, UpdateEstadoEquipamentoDTO updateEstadoDTO, int idAssociacao)
         {
-            var equipamento = await _equipamentoRepository.GetEquipById(id);
-            if(equipamento == null)
+            var equipamento = await _equipamentoRepository.GetEquipById(id, idAssociacao);
+            if (equipamento == null)
             {
                 throw new KeyNotFoundException("Equipamento não encontrado");
             }
 
             equipamento.EstadoEquipamento = updateEstadoDTO.IdEstadoEquipamento;
-            await _equipamentoRepository.UpdateEquip(equipamento);
+            await _equipamentoRepository.UpdateEquip(equipamento, idAssociacao);
         }
 
-        public async Task DeleteEquip(int id)
+        public async Task DeleteEquip(int id, int idAssociacao)
         {
-            var equipamento = await _equipamentoRepository.GetEquipById(id);
+            var equipamento = await _equipamentoRepository.GetEquipById(id, idAssociacao);
 
-            if(equipamento == null)
+            if (equipamento == null)
             {
                 throw new KeyNotFoundException("Equipamento Not Found");
             }
 
-            await _equipamentoRepository.DeleteEquip(id);
+            await _equipamentoRepository.DeleteEquip(id, idAssociacao);
         }
     }
 }

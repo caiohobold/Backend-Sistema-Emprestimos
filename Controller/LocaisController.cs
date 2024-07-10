@@ -19,14 +19,28 @@ namespace EmprestimosAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<LocalReadDTO>>> GetAllLocais([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
-            var locais = await _localService.GetAllLocaisAsync(pageNumber, pageSize);
+            var idAssociacaoClaim = User.Claims.FirstOrDefault(c => c.Type == "idAssoc");
+            if (idAssociacaoClaim == null)
+            {
+                return Unauthorized("ID da associação não encontrado no token.");
+            }
+
+            int idAssociacao = int.Parse(idAssociacaoClaim.Value);
+            var locais = await _localService.GetAllLocaisAsync(pageNumber, pageSize, idAssociacao);
             return Ok(locais);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<LocalReadDTO>> GetLocalById(int id)
         {
-            var local = await _localService.GetLocalByIdAsync(id);
+            var idAssociacaoClaim = User.Claims.FirstOrDefault(c => c.Type == "idAssoc");
+            if (idAssociacaoClaim == null)
+            {
+                return Unauthorized("ID da associação não encontrado no token.");
+            }
+
+            int idAssociacao = int.Parse(idAssociacaoClaim.Value);
+            var local = await _localService.GetLocalByIdAsync(id, idAssociacao);
             if (local == null)
             {
                 return NotFound();
@@ -39,6 +53,14 @@ namespace EmprestimosAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<LocalReadDTO>> AddLocal(LocalCreateDTO localDTO)
         {
+            var idAssociacaoClaim = User.Claims.FirstOrDefault(c => c.Type == "idAssoc");
+            if (idAssociacaoClaim == null)
+            {
+                return Unauthorized("ID da associação não encontrado no token.");
+            }
+
+            int idAssociacao = int.Parse(idAssociacaoClaim.Value);
+            localDTO.idAssociacao = idAssociacao;
             var local = await _localService.AddLocalAsync(localDTO);
             return CreatedAtAction(nameof(GetLocalById), new { id = local.IdLocal }, local);
         }
@@ -47,6 +69,14 @@ namespace EmprestimosAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateLocal(int id, LocalUpdateDTO localDTO)
         {
+            var idAssociacaoClaim = User.Claims.FirstOrDefault(c => c.Type == "idAssoc");
+            if (idAssociacaoClaim == null)
+            {
+                return Unauthorized("ID da associação não encontrado no token.");
+            }
+
+            int idAssociacao = int.Parse(idAssociacaoClaim.Value);
+            localDTO.idAssociacao = idAssociacao;
             try
             {
                 await _localService.UpdateLocalAsync(id, localDTO);
@@ -63,9 +93,16 @@ namespace EmprestimosAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteLocal(int id)
         {
+            var idAssociacaoClaim = User.Claims.FirstOrDefault(c => c.Type == "idAssoc");
+            if (idAssociacaoClaim == null)
+            {
+                return Unauthorized("ID da associação não encontrado no token.");
+            }
+
+            int idAssociacao = int.Parse(idAssociacaoClaim.Value);
             try
             {
-                await _localService.DeleteLocalAsync(id);
+                await _localService.DeleteLocalAsync(id, idAssociacao);
             }
             catch (KeyNotFoundException)
             {

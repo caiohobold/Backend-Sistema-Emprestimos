@@ -37,5 +37,12 @@ namespace EmprestimosAPI.Models
         [Column("endereco")]
         public string Endereco { get; set; }
 
+        [Required]
+        [Column("idassociacao")]
+        public int IdAssociacao { get; set; }
+
+        [ForeignKey("IdAssociacao")]
+        public Associacao Associacao { get; set; }
+
     }
 }

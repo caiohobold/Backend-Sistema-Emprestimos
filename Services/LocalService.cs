@@ -14,20 +14,21 @@ namespace EmprestimosAPI.Services
             _localRepository = localRepository;
         }
 
-        public async Task<IEnumerable<LocalReadDTO>> GetAllLocaisAsync(int pageNumber, int pageSize)
+        public async Task<IEnumerable<LocalReadDTO>> GetAllLocaisAsync(int pageNumber, int pageSize, int idAssociacao)
         {
-            return await _localRepository.GetAllLocaisAsync(pageNumber, pageSize);
+            return await _localRepository.GetAllLocaisAsync(pageNumber, pageSize, idAssociacao);
         }
 
-        public async Task<LocalReadDTO> GetLocalByIdAsync(int id)
+        public async Task<LocalReadDTO> GetLocalByIdAsync(int id, int idAssociacao)
         {
-            var local = await _localRepository.GetLocalByIdAsync(id);
+            var local = await _localRepository.GetLocalByIdAsync(id, idAssociacao);
             if (local == null) return null;
 
             return new LocalReadDTO
             {
                 IdLocal = local.IdLocal,
-                NomeLocal = local.NomeLocal
+                NomeLocal = local.NomeLocal,
+                idAssociacao = local.IdAssociacao
             };
         }
 
@@ -35,33 +36,36 @@ namespace EmprestimosAPI.Services
         {
             var local = new Local
             {
-                NomeLocal = localDTO.NomeLocal
+                NomeLocal = localDTO.NomeLocal,
+                IdAssociacao = localDTO.idAssociacao
             };
 
-            var newLocal = await _localRepository.AddLocalAsync(local);
+            var newLocal = await _localRepository.AddLocalAsync(local, localDTO.idAssociacao);
 
             return new LocalReadDTO
             {
                 IdLocal = newLocal.IdLocal,
-                NomeLocal = newLocal.NomeLocal
+                NomeLocal = newLocal.NomeLocal,
+                idAssociacao = newLocal.IdAssociacao
             };
         }
 
         public async Task UpdateLocalAsync(int id, LocalUpdateDTO localDTO)
         {
-            var local = await _localRepository.GetLocalByIdAsync(id);
+            var local = await _localRepository.GetLocalByIdAsync(id, localDTO.idAssociacao);
             if (local == null)
             {
                 throw new KeyNotFoundException("Local não encontrado.");
             }
 
             local.NomeLocal = localDTO.NomeLocal;
-            await _localRepository.UpdateLocalAsync(local);
+            local.IdAssociacao = localDTO.idAssociacao;
+            await _localRepository.UpdateLocalAsync(local, localDTO.idAssociacao);
         }
 
-        public async Task DeleteLocalAsync(int id)
+        public async Task DeleteLocalAsync(int id, int idAssociacao)
         {
-            await _localRepository.DeleteLocalAsync(id);
+            await _localRepository.DeleteLocalAsync(id, idAssociacao);
         }
     }
 }

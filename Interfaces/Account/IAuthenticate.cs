@@ -8,7 +8,7 @@ namespace EmprestimosAPI.Interfaces.Account
         Task<bool> AuthenticateAssocAsync(string email, string senha);
         Task<bool> UserExists(string email);
         Task<bool> AssocExists(string email);
-        public string GenerateToken(int id, string email, string user, string nomefantasia);
+        public string GenerateToken(int id, string email, string user, string role, int idAssoc, string nomeFantasia);
         public Task<Usuario> GetUserByEmail(string email);
         public Task<Associacao> GetAssocByEmail(string email);
     }

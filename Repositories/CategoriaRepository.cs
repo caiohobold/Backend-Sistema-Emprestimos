@@ -16,33 +16,48 @@ namespace EmprestimosAPI.Repositories
             _context = context;
         }
 
-        public async Task<PagedList<Categoria>> GetAllCategAsync(int pageNumber, int pageSize)
+        public async Task<PagedList<Categoria>> GetAllCategAsync(int pageNumber, int pageSize, int idAssociacao)
         {
-            var query = _context.Categorias.AsQueryable();
+            var query = _context.Categorias
+                .Where(c => c.IdAssociacao == idAssociacao)
+                .AsQueryable();
             return await PagedList<Categoria>.CreateAsync(query, pageNumber, pageSize);
         }
 
-        public async Task<Categoria> GetCategById(int id)
+        public async Task<Categoria> GetCategById(int id, int idAssociacao)
         {
-            return await _context.Categorias.FindAsync(id);
+            return await _context.Categorias
+                .Where(c => c.IdCategoria == id && c.IdAssociacao == idAssociacao)
+                .FirstOrDefaultAsync(c => c.IdCategoria == id);
         }
 
-        public async Task<Categoria> AddCateg(Categoria categoria)
+        public async Task<Categoria> AddCateg(Categoria categoria, int idAssociacao)
         {
+            categoria.IdAssociacao = idAssociacao;
             _context.Categorias.Add(categoria);
             await _context.SaveChangesAsync();
             return categoria;
         }
 
-        public async Task UpdateCateg(Categoria categoria)
+        public async Task UpdateCateg(Categoria categoria, int idAssociacao)
         {
-            _context.Entry(categoria).State = EntityState.Modified;
+            var existingCateg = await _context.Categorias
+                .Where(l => l.IdCategoria == categoria.IdCategoria && l.IdAssociacao == idAssociacao)
+                .SingleOrDefaultAsync();
+
+            if (existingCateg == null)
+            {
+                throw new KeyNotFoundException("Local não encontrado ou não pertence à associação.");
+            }
+            _context.Entry(existingCateg).CurrentValues.SetValues(categoria);
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteCateg(int id)
+        public async Task DeleteCateg(int id, int idAssociacao)
         {
-            var categoria = await _context.Categorias.FindAsync(id);
+            var categoria = await _context.Categorias
+                .Where(c => c.IdCategoria == id && c.IdAssociacao == idAssociacao)
+                .SingleOrDefaultAsync();
             if(categoria == null)
             {
                 throw new KeyNotFoundException("Categoria não encontrada.");

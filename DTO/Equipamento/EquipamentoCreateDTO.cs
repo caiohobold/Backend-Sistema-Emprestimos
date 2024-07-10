@@ -12,6 +12,7 @@ namespace EmprestimosAPI.DTO.Equipamento
         public IFormFile Foto1 { get; set; }
         public IFormFile Foto2 { get; set; }
         public int IdLocal { get; set; }
+        public int idAssociacao { get; set; }
 
     }
 }

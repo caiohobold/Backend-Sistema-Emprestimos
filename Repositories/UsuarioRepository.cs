@@ -23,9 +23,11 @@ namespace EmprestimosAPI.Repositories
             _hashingService = hashingService;
         }
 
-        public async Task<PagedList<Usuario>> GetAllUsers(int pageNumber, int pageSize)
+        public async Task<PagedList<Usuario>> GetAllUsers(int pageNumber, int pageSize, int idAssociacao)
         {
-            var query = _context.Usuarios.Include(u => u.Associacao);
+            var query = _context.Usuarios
+                .Where(u => u.IdAssociacao == idAssociacao)
+                .Include(u => u.Associacao);
 
             var count = await query.CountAsync();
             var items = await query.Skip((pageNumber - 1) * pageSize)
@@ -35,13 +37,14 @@ namespace EmprestimosAPI.Repositories
             return new PagedList<Usuario>(items, count, pageNumber, pageSize);
         }
 
-        public async Task<Usuario> GetUserById(int id)
-        {
+        public async Task<Usuario> GetUserById(int id, int idAssociacao)
+        { 
             try
             {
                 var user = await _context.Usuarios
+                                         .Where(u => u.IdUsuario == id && u.IdAssociacao == idAssociacao)
                                          .Include(u => u.Associacao)
-                                         .FirstOrDefaultAsync(u => u.IdUsuario == id);
+                                         .FirstOrDefaultAsync();
 
                 if (user == null)
                 {
@@ -61,9 +64,11 @@ namespace EmprestimosAPI.Repositories
             }
         }
 
-        public async Task<Usuario> GetUserByEmailAsync(string email)
+        public async Task<Usuario> GetUserByEmailAsync(string email, int idAssociacao)
         {
-            return await _context.Usuarios.FirstOrDefaultAsync(u => u.EmailPessoal == email);
+            return await _context.Usuarios
+                .Where(u => u.EmailPessoal == email && u.IdAssociacao == idAssociacao)
+                .FirstOrDefaultAsync();
         }
 
         public async Task<Usuario> AddUser(UsuarioCreateDTO usuarioDTO)
@@ -84,26 +89,32 @@ namespace EmprestimosAPI.Repositories
             _context.Usuarios.Add(usuario);
             await _context.SaveChangesAsync();
             return usuario;
-        
         }
 
-        public async Task UpdateUser(Usuario usuario)
+        public async Task UpdateUser(Usuario usuario, int idAssociacao)
         {
-                
-                _context.Entry(usuario).State = EntityState.Modified;
-                await _context.SaveChangesAsync();
-            
+            var existingUsuario = await _context.Usuarios
+                .Where(u => u.IdUsuario == usuario.IdUsuario && u.IdAssociacao == idAssociacao)
+                .FirstOrDefaultAsync();
+
+            if (existingUsuario == null)
+            {
+                throw new KeyNotFoundException("Usuário não encontrado ou não pertence à associação.");
+            }
+
+            _context.Entry(existingUsuario).CurrentValues.SetValues(usuario);
+            await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteUser(int id)
+        public async Task DeleteUser(int id, int idAssociacao)
         {
-            var usuario = await _context.Usuarios.FindAsync(id);
-
-
+            var usuario = await _context.Usuarios
+                .Where(u => u.IdUsuario == id && u.IdAssociacao == idAssociacao)
+                .FirstOrDefaultAsync();
 
             if (usuario == null)
             {
-                throw new KeyNotFoundException("Usuário não encontrado.");
+                throw new KeyNotFoundException("Usuário não encontrado ou não pertence à associação.");
             }
 
             var temEmprestimo = await _context.Emprestimos
@@ -113,7 +124,7 @@ namespace EmprestimosAPI.Repositories
             {
                 throw new InvalidOperationException("Não é possível remover um usuário que está vinculado a empréstimos.");
             }
-            
+
             _context.Usuarios.Remove(usuario);
             await _context.SaveChangesAsync();
         }

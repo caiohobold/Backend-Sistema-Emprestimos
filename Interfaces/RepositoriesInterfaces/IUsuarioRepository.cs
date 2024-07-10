@@ -6,11 +6,11 @@ namespace EmprestimosAPI.Interfaces.RepositoriesInterfaces
 {
     public interface IUsuarioRepository
     {
-        Task<PagedList<Usuario>> GetAllUsers(int pageNumber, int pageSize);
-        Task<Usuario> GetUserById(int id);
-        Task<Usuario> GetUserByEmailAsync(string email);
+        Task<PagedList<Usuario>> GetAllUsers(int pageNumber, int pageSize, int idAssociacao);
+        Task<Usuario> GetUserById(int id, int idAssociacao);
+        Task<Usuario> GetUserByEmailAsync(string email, int idAssociacao);
         Task<Usuario> AddUser(UsuarioCreateDTO usuarioDTO);
-        Task UpdateUser(Usuario usuario);
-        Task DeleteUser(int id);
+        Task UpdateUser(Usuario usuario, int idAssociacao);
+        Task DeleteUser(int id, int idAssociacao);
     }
 }

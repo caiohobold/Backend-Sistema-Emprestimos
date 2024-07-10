@@ -28,7 +28,19 @@ namespace EmprestimosAPI.Controller
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UsuarioReadDTO>>> GetAll(int pageNumber, int pageSize)
         {
-            var users = await _usuarioService.GetAllUsers(pageNumber, pageSize);
+            var idAssociacaoClaim = User.Claims.FirstOrDefault(c => c.Type == "idAssoc");
+            if (idAssociacaoClaim == null)
+            {
+                Console.WriteLine("ID da associação não encontrado no token.");
+                foreach (var claim in User.Claims)
+                {
+                    Console.WriteLine($"Claim Type: {claim.Type}, Claim Value: {claim.Value}");
+                }
+                return Unauthorized("ID da associação não encontrado no token.");
+            }
+
+            int idAssociacao = int.Parse(idAssociacaoClaim.Value);
+            var users = await _usuarioService.GetAllUsers(pageNumber, pageSize, idAssociacao);
             return Ok(users);
         }
 
@@ -36,8 +48,15 @@ namespace EmprestimosAPI.Controller
         [HttpGet("{id}")]
         public async Task<ActionResult<UsuarioReadDTO>> GetById(int id)
         {
-            var usuario = await _usuarioService.GetUserById(id);
-            if(usuario == null)
+            var idAssociacaoClaim = User.Claims.FirstOrDefault(c => c.Type == "idAssoc");
+            if (idAssociacaoClaim == null)
+            {
+                return Unauthorized("ID da associação não encontrado no token.");
+            }
+
+            int idAssociacao = int.Parse(idAssociacaoClaim.Value);
+            var usuario = await _usuarioService.GetUserById(id, idAssociacao);
+            if (usuario == null)
             {
                 return NotFound();
             }
@@ -48,26 +67,34 @@ namespace EmprestimosAPI.Controller
         [HttpPost("register-user")]
         public async Task<ActionResult<UserToken>> Post(UsuarioCreateDTO usuarioDTO)
         {
-            if(usuarioDTO == null)
+            if (usuarioDTO == null)
             {
                 return BadRequest("Dados inválidos");
             }
-            
+
             var emailExiste = await _authenticateService.UserExists(usuarioDTO.EmailPessoal);
 
-            if(emailExiste)
+            if (emailExiste)
             {
                 return BadRequest("Este e-mail já possui um cadastro.");
             }
 
+            var idAssociacaoClaim = User.Claims.FirstOrDefault(c => c.Type == "idAssoc");
+            if (idAssociacaoClaim == null)
+            {
+                return Unauthorized("ID da associação não encontrado no token.");
+            }
 
-            var usuarioReadDto = await _usuarioService.AddUser(usuarioDTO);
-            if(usuarioReadDto == null)
+            int idAssociacao = int.Parse(idAssociacaoClaim.Value);
+            usuarioDTO.IdAssociacao = idAssociacao;
+
+            var usuarioReadDto = await _usuarioService.AddUser(usuarioDTO, idAssociacao);
+            if (usuarioReadDto == null)
             {
                 return BadRequest("Ocorreu um erro ao cadastrar.");
             }
 
-            var token = _authenticateService.GenerateToken(usuarioReadDto.IdUsuario, usuarioReadDto.EmailPessoal, usuarioReadDto.NomeCompleto, "Usuario");
+            var token = _authenticateService.GenerateToken(usuarioReadDto.IdUsuario, usuarioReadDto.NomeCompleto, usuarioReadDto.EmailPessoal, "Usuario", usuarioReadDto.IdAssociacao, usuarioReadDto.AssociacaoNomeFantasia);
 
             return new UserToken
             {
@@ -85,31 +112,44 @@ namespace EmprestimosAPI.Controller
             }
 
             var result = await _authenticateService.AuthenticateAsync(loginModel.Email, loginModel.Senha);
-            if(!result)
+            if (!result)
             {
                 return Unauthorized("E-mail ou senha inválidos!");
             }
 
             var usuario = await _authenticateService.GetUserByEmail(loginModel.Email);
-            var token = _authenticateService.GenerateToken(usuario.IdUsuario, usuario.EmailPessoal, usuario.NomeCompleto, "Usuario");
+            var token = _authenticateService.GenerateToken(usuario.IdUsuario, usuario.NomeCompleto, usuario.EmailPessoal, "Usuario", usuario.IdAssociacao, usuario.Associacao.NomeFantasia);
 
             return new UserToken { Token = token };
         }
 
         [Authorize(Roles = "Associacao")]
         [HttpPut("{id}")]
-        public async Task<ActionResult> Put (int id, UsuarioUpdateDTO usuarioDTO)
+        public async Task<ActionResult> Put(int id, UsuarioUpdateDTO usuarioDTO)
         {
-            await _usuarioService.UpdateUser(id, usuarioDTO);
-            return Ok();
+            var idAssociacaoClaim = User.Claims.FirstOrDefault(c => c.Type == "idAssoc");
+            if (idAssociacaoClaim == null)
+            {
+                return Unauthorized("ID da associação não encontrado no token.");
+            }
 
+            int idAssociacao = int.Parse(idAssociacaoClaim.Value);
+            await _usuarioService.UpdateUser(id, usuarioDTO, idAssociacao);
+            return Ok();
         }
 
         [Authorize(Roles = "Associacao")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            await _usuarioService.DeleteUser(id);
+            var idAssociacaoClaim = User.Claims.FirstOrDefault(c => c.Type == "idAssoc");
+            if (idAssociacaoClaim == null)
+            {
+                return Unauthorized("ID da associação não encontrado no token.");
+            }
+
+            int idAssociacao = int.Parse(idAssociacaoClaim.Value);
+            await _usuarioService.DeleteUser(id, idAssociacao);
             return NoContent();
         }
 
@@ -118,13 +158,19 @@ namespace EmprestimosAPI.Controller
         public async Task<ActionResult<UsuarioReadDTO>> GetMe()
         {
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
+            var idAssociacaoClaim = User.Claims.FirstOrDefault(c => c.Type == "idAssoc")?.Value;
 
             if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
             {
                 return BadRequest("Invalid token");
             }
 
-            var usuario = await _usuarioService.GetUserById(userId);
+            if (string.IsNullOrEmpty(idAssociacaoClaim) || !int.TryParse(idAssociacaoClaim, out int idAssociacao))
+            {
+                return BadRequest("ID da associação não encontrado no token.");
+            }
+
+            var usuario = await _usuarioService.GetUserById(userId, idAssociacao);
             if (usuario == null)
             {
                 return NotFound("User not found");
@@ -133,13 +179,24 @@ namespace EmprestimosAPI.Controller
             return Ok(usuario);
         }
 
-
         [Authorize]
         [HttpPut("me")]
         public async Task<ActionResult> UpdateMe([FromBody] UsuarioUpdateDTO usuarioDTO)
         {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            await _usuarioService.UpdateUser(userId, usuarioDTO);
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
+            var idAssociacaoClaim = User.Claims.FirstOrDefault(c => c.Type == "idAssoc")?.Value;
+
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int userId))
+            {
+                return BadRequest("Invalid token");
+            }
+
+            if (string.IsNullOrEmpty(idAssociacaoClaim) || !int.TryParse(idAssociacaoClaim, out int idAssociacao))
+            {
+                return BadRequest("ID da associação não encontrado no token.");
+            }
+
+            await _usuarioService.UpdateUser(userId, usuarioDTO, idAssociacao);
             return NoContent();
         }
 
@@ -147,12 +204,19 @@ namespace EmprestimosAPI.Controller
         [HttpPut("{id}/change-password")]
         public async Task<ActionResult> ChangePassword(int id, [FromBody] ChangePasswordDTO changePasswordDTO)
         {
-            if(changePasswordDTO == null || string.IsNullOrWhiteSpace(changePasswordDTO.NovaSenha))
+            if (changePasswordDTO == null || string.IsNullOrWhiteSpace(changePasswordDTO.NovaSenha))
             {
                 return BadRequest("Senha inválida.");
             }
 
-            await _usuarioService.ChangeUserPassword(id, changePasswordDTO.NovaSenha);
+            var idAssociacaoClaim = User.Claims.FirstOrDefault(c => c.Type == "idAssoc");
+            if (idAssociacaoClaim == null)
+            {
+                return Unauthorized("ID da associação não encontrado no token.");
+            }
+
+            int idAssociacao = int.Parse(idAssociacaoClaim.Value);
+            await _usuarioService.ChangeUserPassword(id, changePasswordDTO.NovaSenha, idAssociacao);
             return NoContent();
         }
     }

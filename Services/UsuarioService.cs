@@ -2,6 +2,7 @@
 using EmprestimosAPI.DTO;
 using EmprestimosAPI.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using EmprestimosAPI.Interfaces.RepositoriesInterfaces;
 using EmprestimosAPI.DTO.Usuario;
@@ -23,9 +24,9 @@ namespace EmprestimosAPI.Services
             _hashingService = hashingService;
         }
 
-        public async Task<IEnumerable<UsuarioReadDTO>> GetAllUsers(int pageNumber, int pageSize)
+        public async Task<IEnumerable<UsuarioReadDTO>> GetAllUsers(int pageNumber, int pageSize, int idAssociacao)
         {
-            var usuarios = await _usuarioRepository.GetAllUsers(pageNumber, pageSize);
+            var usuarios = await _usuarioRepository.GetAllUsers(pageNumber, pageSize, idAssociacao);
             return usuarios.Select(a => new UsuarioReadDTO
             {
                 IdUsuario = a.IdUsuario,
@@ -41,10 +42,10 @@ namespace EmprestimosAPI.Services
             }).ToList();
         }
 
-        public async Task<UsuarioReadDTO> GetUserById(int id)
+        public async Task<UsuarioReadDTO> GetUserById(int id, int idAssociacao)
         {
-            var usuario = await _usuarioRepository.GetUserById(id);
-            if(usuario == null) return null;
+            var usuario = await _usuarioRepository.GetUserById(id, idAssociacao);
+            if (usuario == null) return null;
 
             return new UsuarioReadDTO
             {
@@ -58,7 +59,7 @@ namespace EmprestimosAPI.Services
             };
         }
 
-        public async Task<UsuarioReadDTO> AddUser(UsuarioCreateDTO usuarioDTO)
+        public async Task<UsuarioReadDTO> AddUser(UsuarioCreateDTO usuarioDTO, int idAssociacao)
         {
             var usuario = new Usuario
             {
@@ -69,7 +70,7 @@ namespace EmprestimosAPI.Services
                 SenhaHash = usuarioDTO.Senha,
                 DataNascimento = usuarioDTO.DataNascimento,
                 Endereco = usuarioDTO.Endereco,
-                IdAssociacao = usuarioDTO.IdAssociacao
+                IdAssociacao = idAssociacao
             };
 
             usuario.SenhaHash = _hashingService.HashPassword(usuario, usuarioDTO.Senha);
@@ -93,10 +94,10 @@ namespace EmprestimosAPI.Services
             };
         }
 
-        public async Task UpdateUser(int id, UsuarioUpdateDTO usuarioDTO)
+        public async Task UpdateUser(int id, UsuarioUpdateDTO usuarioDTO, int idAssociacao)
         {
-            var usuario = await _usuarioRepository.GetUserById(id);
-            if(usuario == null)
+            var usuario = await _usuarioRepository.GetUserById(id, idAssociacao);
+            if (usuario == null)
             {
                 throw new KeyNotFoundException("Usuário Not Found");
             }
@@ -107,29 +108,28 @@ namespace EmprestimosAPI.Services
             usuario.EmailPessoal = usuarioDTO.EmailPessoal;
             usuario.DataNascimento = usuarioDTO.DataNascimento;
             usuario.Endereco = usuarioDTO.Endereco;
-            await _usuarioRepository.UpdateUser(usuario);
-
+            await _usuarioRepository.UpdateUser(usuario, idAssociacao);
         }
 
-        public async Task DeleteUser(int id)
+        public async Task DeleteUser(int id, int idAssociacao)
         {
-            var usuario = await _usuarioRepository.GetUserById(id);
+            var usuario = await _usuarioRepository.GetUserById(id, idAssociacao);
 
-            if(usuario == null)
+            if (usuario == null)
             {
                 throw new KeyNotFoundException("Usuário Not Found");
             }
 
-            await _usuarioRepository.DeleteUser(id);
+            await _usuarioRepository.DeleteUser(id, idAssociacao);
         }
 
-        public async Task ChangeUserPassword(int id, string newPassword)
+        public async Task ChangeUserPassword(int id, string newPassword, int idAssociacao)
         {
-            var user = await _usuarioRepository.GetUserById(id);
-            if(user != null)
+            var user = await _usuarioRepository.GetUserById(id, idAssociacao);
+            if (user != null)
             {
                 user.SenhaHash = _hashingService.HashPassword(user, newPassword);
-                await _usuarioRepository.UpdateUser(user);
+                await _usuarioRepository.UpdateUser(user, idAssociacao);
             }
         }
     }

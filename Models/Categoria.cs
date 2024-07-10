@@ -13,5 +13,12 @@ namespace EmprestimosAPI.Models
         [StringLength(100)]
         [Column("nome_categoria")]
         public string NomeCategoria { get; set;}
+
+        [Required]
+        [Column("idassociacao")]
+        public int IdAssociacao { get; set; }
+
+        [ForeignKey("IdAssociacao")]
+        public Associacao Associacao { get; set; }
     }
 }

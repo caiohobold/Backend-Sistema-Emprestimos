@@ -19,9 +19,9 @@ namespace EmprestimosAPI.Services
         }
 
 
-        public async Task<IEnumerable<EmprestimoReadDTO>> GetAllEmp(int pageNumber, int pageSize)
+        public async Task<IEnumerable<EmprestimoReadDTO>> GetAllEmp(int pageNumber, int pageSize, int idAssociacao)
         {
-            var emprestimos = await _emprestimoRepository.GetAllEmp(pageNumber, pageSize);
+            var emprestimos = await _emprestimoRepository.GetAllEmp(pageNumber, pageSize, idAssociacao);
             return emprestimos.Select(emprestimo => new EmprestimoReadDTO
             {
                 Id = emprestimo.Id,
@@ -33,13 +33,15 @@ namespace EmprestimosAPI.Services
                 DataEmprestimo = emprestimo.DataEmprestimo,
                 DataDevolucao = emprestimo.DataDevolucaoEmprestimo,
                 IdUsuario = emprestimo.Usuario.IdUsuario,
-                Status = emprestimo.Status
+                Status = emprestimo.Status,
+                idAssociacao = emprestimo.IdAssociacao
             }).ToList();
         }
 
-        public async Task<EmprestimoReadDTO> GetEmpById(int id)
+
+        public async Task<EmprestimoReadDTO> GetEmpById(int id, int idAssociacao)
         {
-            var emprestimo = await _emprestimoRepository.GetEmpById(id);
+            var emprestimo = await _emprestimoRepository.GetEmpById(id, idAssociacao);
             if (emprestimo == null) return null;
 
             return new EmprestimoReadDTO
@@ -53,16 +55,18 @@ namespace EmprestimosAPI.Services
                 DataEmprestimo = emprestimo.DataEmprestimo,
                 DataDevolucao = emprestimo.DataDevolucaoEmprestimo,
                 IdUsuario = emprestimo.Usuario.IdUsuario,
-                Status = emprestimo.Status
+                Status = emprestimo.Status,
+                idAssociacao = emprestimo.IdAssociacao
             };
         }
 
-        public async Task<IEnumerable<EmprestimoReadDTO>> GetEmpByPessoaId(int idPessoa)
+
+        public async Task<IEnumerable<EmprestimoReadDTO>> GetEmpByPessoaId(int idPessoa, int idAssociacao)
         {
-            var emprestimos = await _emprestimoRepository.GetEmpByPessoaId(idPessoa);
+            var emprestimos = await _emprestimoRepository.GetEmpByPessoaId(idPessoa, idAssociacao);
 
             var orderedEmprestimos = emprestimos
-                .OrderBy(e => e.Status) // Ordenar pelo status, empréstimos com status 0 primeiro
+                .OrderBy(e => e.Status)
                 .Select(e => new EmprestimoReadDTO
                 {
                     Id = e.Id,
@@ -74,7 +78,8 @@ namespace EmprestimosAPI.Services
                     DataEmprestimo = e.DataEmprestimo,
                     DataDevolucao = e.DataDevolucaoEmprestimo,
                     Status = e.Status,
-                    IdUsuario = e.IdUsuario
+                    IdUsuario = e.IdUsuario,
+                    idAssociacao = e.IdAssociacao
                 })
                 .ToList();
 
@@ -82,9 +87,10 @@ namespace EmprestimosAPI.Services
         }
 
 
-        public async Task<IEnumerable<EmprestimoReadDTO>> GetActiveEmp(int pageNumber, int pageSize)
+
+        public async Task<IEnumerable<EmprestimoReadDTO>> GetActiveEmp(int pageNumber, int pageSize, int idAssociacao)
         {
-            var emprestimos = await _emprestimoRepository.GetActiveEmp(pageNumber, pageSize);
+            var emprestimos = await _emprestimoRepository.GetActiveEmp(pageNumber, pageSize, idAssociacao);
             return emprestimos.Select(emprestimo => new EmprestimoReadDTO
             {
                 Id = emprestimo.Id,
@@ -96,13 +102,15 @@ namespace EmprestimosAPI.Services
                 DataEmprestimo = emprestimo.DataEmprestimo,
                 DataDevolucao = emprestimo.DataDevolucaoEmprestimo,
                 IdUsuario = emprestimo.Usuario.IdUsuario,
-                Status = emprestimo.Status
+                Status = emprestimo.Status,
+                idAssociacao = emprestimo.IdAssociacao
             }).ToList();
         }
 
-        public async Task<IEnumerable<EmprestimoReadDTO>> GetEmpAtrasados()
+
+        public async Task<IEnumerable<EmprestimoReadDTO>> GetEmpAtrasados(int idAssociacao)
         {
-            var emprestimos = await _emprestimoRepository.GetEmpAtrasados();
+            var emprestimos = await _emprestimoRepository.GetEmpAtrasados(idAssociacao);
             return emprestimos.Select(e => new EmprestimoReadDTO
             {
                 Id = e.Id,
@@ -115,11 +123,13 @@ namespace EmprestimosAPI.Services
                 DataEmprestimo = e.DataEmprestimo,
                 DataDevolucao = e.DataDevolucaoEmprestimo,
                 IdUsuario = e.Usuario.IdUsuario,
-                Status = e.Status
+                Status = e.Status,
+                idAssociacao = e.IdAssociacao
             }).ToList();
         }
 
-        public async Task<EmprestimoReadDTO> AddEmp(EmprestimoCreateDTO emprestimoDTO)
+
+        public async Task<EmprestimoReadDTO> AddEmp(EmprestimoCreateDTO emprestimoDTO, int idAssociacao)
         {
             if (emprestimoDTO.DataDevolucao < emprestimoDTO.DataEmprestimo)
             {
@@ -127,17 +137,18 @@ namespace EmprestimosAPI.Services
             }
 
             var emprestimo = new Emprestimo
-            { 
+            {
                 DataEmprestimo = emprestimoDTO.DataEmprestimo,
                 DataDevolucaoEmprestimo = emprestimoDTO.DataDevolucao,
                 IdPessoa = emprestimoDTO.IdPessoa,
                 IdEquipamento = emprestimoDTO.IdEquipamento,
-                IdUsuario = emprestimoDTO.IdUsuario
+                IdUsuario = emprestimoDTO.IdUsuario,
+                IdAssociacao = idAssociacao
             };
 
-            var newEmprestimo = await _emprestimoRepository.AddEmp(emprestimo);
+            var newEmprestimo = await _emprestimoRepository.AddEmp(emprestimo, idAssociacao);
 
-            if(newEmprestimo.Pessoa == null)
+            if (newEmprestimo.Pessoa == null)
             {
                 await _context.Entry(newEmprestimo).Reference(e => e.Pessoa).LoadAsync();
             }
@@ -161,46 +172,48 @@ namespace EmprestimosAPI.Services
                 DataEmprestimo = emprestimo.DataEmprestimo,
                 DataDevolucao = emprestimo.DataDevolucaoEmprestimo,
                 IdUsuario = emprestimo.Usuario.IdUsuario,
-                Status = emprestimo.Status
+                Status = emprestimo.Status,
+                idAssociacao = emprestimo.IdAssociacao
             };
-            
         }
 
-        public async Task UpdateEmp(int id, EmprestimoUpdateDTO emprestimoDTO)
+
+        public async Task UpdateEmp(int id, EmprestimoUpdateDTO emprestimoDTO, int idAssociacao)
         {
-            var emprestimo = await _emprestimoRepository.GetEmpById(id);
+            var emprestimo = await _emprestimoRepository.GetEmpById(id, idAssociacao);
             if (emprestimo == null)
             {
-                throw new KeyNotFoundException("Empréstimo Not Found");
+                throw new KeyNotFoundException("Empréstimo não encontrado.");
             }
 
-            if(emprestimoDTO.DataDevolucao < emprestimoDTO.DataEmprestimo)
+            if (emprestimoDTO.DataDevolucao < emprestimoDTO.DataEmprestimo)
             {
-                throw new Exception("A data de devolução não pode ser anterior à data de início do empréstimo.");
+                throw new ArgumentException("A data de devolução não pode ser anterior à data de início do empréstimo.");
             }
 
             emprestimo.DataEmprestimo = emprestimoDTO.DataEmprestimo;
             emprestimo.DataDevolucaoEmprestimo = emprestimoDTO.DataDevolucao;
 
-            await _emprestimoRepository.UpdateEmp(emprestimo);
+            await _emprestimoRepository.UpdateEmp(emprestimo, idAssociacao);
         }
 
-        public async Task DeleteEmp(int id)
-        {
-            var emprestimo = await _emprestimoRepository.GetEmpById(id);
 
-            if(emprestimo == null)
+        public async Task DeleteEmp(int id, int idAssociacao)
+        {
+            var emprestimo = await _emprestimoRepository.GetEmpById(id, idAssociacao);
+
+            if (emprestimo == null)
             {
-                throw new KeyNotFoundException("Empréstimo Not Found");
+                throw new KeyNotFoundException("Empréstimo não encontrado.");
             }
 
-            await _emprestimoRepository.DeleteEmp(id);
-            
+            await _emprestimoRepository.DeleteEmp(id, idAssociacao);
         }
 
-        public async Task FinalizarEmp(int id)
+
+        public async Task FinalizarEmp(int id, int idAssociacao)
         {
-            var emprestimo = await _emprestimoRepository.GetEmpById(id);
+            var emprestimo = await _emprestimoRepository.GetEmpById(id, idAssociacao);
             if (emprestimo == null)
             {
                 throw new KeyNotFoundException("Empréstimo não encontrado.");
@@ -210,11 +223,12 @@ namespace EmprestimosAPI.Services
             {
                 throw new InvalidOperationException("Este empréstimo já foi finalizado.");
             }
-                
+
             emprestimo.Status = 1;
             emprestimo.DataEmprestimo = DateTime.SpecifyKind(emprestimo.DataEmprestimo, DateTimeKind.Utc);
             emprestimo.DataDevolucaoEmprestimo = DateTime.UtcNow;
-            await _emprestimoRepository.UpdateEmp(emprestimo);
+            await _emprestimoRepository.UpdateEmp(emprestimo, idAssociacao);
         }
+
     }
 }

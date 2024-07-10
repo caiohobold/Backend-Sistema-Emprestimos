@@ -68,7 +68,7 @@ namespace EmprestimosAPI.Controller
                 return BadRequest("Ocorreu um erro ao cadastrar.");
             }
 
-            var token = _authenticateService.GenerateToken(associacaoReadDto.IdAssociacao, associacaoReadDto.EmailProfissional, associacaoReadDto.NomeFantasia, associacaoReadDto.NomeFantasia);
+            var token = _authenticateService.GenerateToken(associacaoReadDto.IdAssociacao, associacaoReadDto.NomeFantasia, associacaoReadDto.EmailProfissional, "Associacao", associacaoReadDto.IdAssociacao, associacaoReadDto.NomeFantasia);
 
 
             return new UserToken
@@ -93,7 +93,7 @@ namespace EmprestimosAPI.Controller
             }
 
             var associacao = await _authenticateService.GetAssocByEmail(loginModel.Email);
-            var token = _authenticateService.GenerateToken(associacao.IdAssociacao, associacao.EmailProfissional, associacao.NomeFantasia, "Associacao");
+            var token = _authenticateService.GenerateToken(associacao.IdAssociacao, associacao.NomeFantasia, associacao.EmailProfissional, "Associacao", associacao.IdAssociacao, associacao.NomeFantasia);
 
             return new UserToken { Token = token };
         }

@@ -14,5 +14,6 @@
         public string Foto2 { get; set; }
         public int IdLocal { get; set; }
         public string NomeLocal { get; set; }
+        public int idAssociacao { get; set; }
     }
 }

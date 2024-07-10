@@ -16,13 +16,15 @@ namespace EmprestimosAPI.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<LocalReadDTO>> GetAllLocaisAsync(int pageNumber, int pageSize)
+        public async Task<IEnumerable<LocalReadDTO>> GetAllLocaisAsync(int pageNumber, int pageSize, int idAssociacao)
         {
             var query = _context.Locais
+                .Where(l => l.IdAssociacao == idAssociacao)
                 .Select(l => new LocalReadDTO
                 {
                     IdLocal = l.IdLocal,
-                    NomeLocal = l.NomeLocal
+                    NomeLocal = l.NomeLocal,
+                    idAssociacao = l.IdAssociacao
                 });
 
             var count = await query.CountAsync();
@@ -33,27 +35,40 @@ namespace EmprestimosAPI.Repositories
             return new PagedList<LocalReadDTO>(items, count, pageNumber, pageSize);
         }
 
-        public async Task<Local> GetLocalByIdAsync(int id)
+        public async Task<Local> GetLocalByIdAsync(int id, int idAssociacao)
         {
-            return await _context.Locais.FindAsync(id);
+            return await _context.Locais
+                .Where(l => l.IdLocal == id && l.IdAssociacao == idAssociacao)
+                .FirstOrDefaultAsync(l => l.IdLocal == id);
         }
 
-        public async Task<Local> AddLocalAsync(Local local)
+        public async Task<Local> AddLocalAsync(Local local, int idAssociacao)
         {
+            local.IdAssociacao = idAssociacao;
             _context.Locais.Add(local);
             await _context.SaveChangesAsync();
             return local;
         }
 
-        public async Task UpdateLocalAsync(Local local)
+        public async Task UpdateLocalAsync(Local local, int idAssociacao)
         {
-            _context.Entry(local).State = EntityState.Modified;
+            var existingLocal = await _context.Locais
+                .Where(l => l.IdLocal == local.IdLocal && l.IdAssociacao == idAssociacao)
+                .SingleOrDefaultAsync();
+
+            if (existingLocal == null)
+            {
+                throw new KeyNotFoundException("Local não encontrado ou não pertence à associação.");
+            }
+            _context.Entry(existingLocal).CurrentValues.SetValues(local);
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteLocalAsync(int id)
+        public async Task DeleteLocalAsync(int id, int idAssociacao)
         {
-            var local = await _context.Locais.FindAsync(id);
+            var local = await _context.Locais
+                .Where(l => l.IdLocal == id && l.IdAssociacao == idAssociacao)
+                .SingleOrDefaultAsync();
             if (local == null)
             {
                 throw new KeyNotFoundException("Local não encontrado.");

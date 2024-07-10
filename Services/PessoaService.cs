@@ -16,9 +16,9 @@ namespace EmprestimosAPI.Services
             _pessoaRepository = pessoaRepository;
         }
 
-        public async Task<IEnumerable<PessoaReadDTO>> GetAllPessoasAsync(int pageNumber, int pageSize)
+        public async Task<IEnumerable<PessoaReadDTO>> GetAllPessoasAsync(int pageNumber, int pageSize, int idAssociacao)
         {
-            var pessoas = await _pessoaRepository.GetAllPessoasAsync(pageNumber, pageSize);
+            var pessoas = await _pessoaRepository.GetAllPessoasAsync(pageNumber, pageSize, idAssociacao);
             return pessoas.Select(a => new PessoaReadDTO
             {
                 IdPessoa = a.IdPessoa,
@@ -28,14 +28,15 @@ namespace EmprestimosAPI.Services
                 Telefone = a.Telefone,
                 Descricao = a.Descricao,
                 Endereco = a.Endereco,
+                idAssociacao = a.idAssociacao,
                 StatusEmprestimo = a.StatusEmprestimo,
                 DataEmprestimo = a.DataEmprestimo
             }).ToList();
         }
 
-        public async Task<PessoaReadDTO> GetPessoaById(int id)
+        public async Task<PessoaReadDTO> GetPessoaById(int id, int idAssociacao)
         {
-            var pessoa = await _pessoaRepository.GetPessoaByIdAsync(id);
+            var pessoa = await _pessoaRepository.GetPessoaByIdAsync(id, idAssociacao);
             if (pessoa == null) return null;
 
             var pessoaDTO = new PessoaReadDTO
@@ -47,6 +48,7 @@ namespace EmprestimosAPI.Services
                 Telefone = pessoa.Telefone,
                 Descricao = pessoa.Descricao,
                 Endereco = pessoa.Endereco,
+                idAssociacao = pessoa.idAssociacao,
                 StatusEmprestimo = pessoa.StatusEmprestimo,
                 DataEmprestimo = pessoa.DataEmprestimo
             };
@@ -63,10 +65,11 @@ namespace EmprestimosAPI.Services
                 Email = pessoaDTO.Email,
                 Telefone = pessoaDTO.Telefone,
                 Descricao = pessoaDTO.Descricao,
-                Endereco = pessoaDTO.Endereco
+                Endereco = pessoaDTO.Endereco,
+                IdAssociacao = pessoaDTO.idAssociacao
             };
 
-            var newPessoa = await _pessoaRepository.AddPessoaAsync(pessoa);
+            var newPessoa = await _pessoaRepository.AddPessoaAsync(pessoa, pessoaDTO.idAssociacao);
 
             return new PessoaReadDTO
             {
@@ -76,14 +79,15 @@ namespace EmprestimosAPI.Services
                 Email = newPessoa.Email,
                 Telefone = newPessoa.Telefone,
                 Descricao = newPessoa.Descricao,
-                Endereco = newPessoa.Endereco
+                Endereco = newPessoa.Endereco,
+                idAssociacao = newPessoa.IdAssociacao
             };
         }
 
         public async Task UpdatePessoaAsync(int id, PessoaUpdateDTO pessoaDTO)
         {
-            var pessoa = await _pessoaRepository.GetPessoaByIdAsync(id);
-            if(pessoa == null)
+            var pessoa = await _pessoaRepository.GetPessoaByIdAsync(id, pessoaDTO.idAssociacao);
+            if (pessoa == null)
             {
                 throw new KeyNotFoundException("Pessoa Not Found");
             }
@@ -94,6 +98,7 @@ namespace EmprestimosAPI.Services
             pessoa.Telefone = pessoaDTO.Telefone;
             pessoa.Descricao = pessoaDTO.Descricao;
             pessoa.Endereco = pessoaDTO.Endereco;
+            pessoa.idAssociacao = pessoaDTO.idAssociacao;
 
             await _pessoaRepository.UpdatePessoaAsync(new Pessoa
             {
@@ -103,19 +108,20 @@ namespace EmprestimosAPI.Services
                 Email = pessoa.Email,
                 Telefone = pessoa.Telefone,
                 Descricao = pessoa.Descricao,
-                Endereco = pessoa.Endereco
-            });
+                Endereco = pessoa.Endereco,
+                IdAssociacao = pessoa.idAssociacao
+            }, pessoaDTO.idAssociacao);
         }
 
-        public async Task DeletePessoaAsync(int id)
+        public async Task DeletePessoaAsync(int id, int idAssociacao)
         {
-            var pessoa = await _pessoaRepository.GetPessoaByIdAsync(id);
-            if(pessoa == null)
+            var pessoa = await _pessoaRepository.GetPessoaByIdAsync(id, idAssociacao);
+            if (pessoa == null)
             {
                 throw new KeyNotFoundException("Pessoa not found");
             }
 
-            await _pessoaRepository.DeletePessoaAsync(id);
+            await _pessoaRepository.DeletePessoaAsync(id, idAssociacao);
         }
     }
 }

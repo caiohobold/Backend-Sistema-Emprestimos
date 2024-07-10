@@ -21,7 +21,8 @@ namespace EmprestimosAPI.Services
                 UserName = feedbackModel.UserName,
                 Message = feedbackModel.Message,
                 Type = "Error",
-                Date = feedbackModel.Date
+                Date = feedbackModel.Date,
+                IdAssociacao = feedbackModel.idAssociacao
             };
             await _feedbackRepository.AddFeedbackAsync(feedback);
         }
@@ -33,7 +34,8 @@ namespace EmprestimosAPI.Services
                 UserName = feedbackModel.UserName,
                 Message = feedbackModel.Message,
                 Type = "Feedback",
-                Date = feedbackModel.Date
+                Date = feedbackModel.Date,
+                IdAssociacao = feedbackModel.idAssociacao
             };
             await _feedbackRepository.AddFeedbackAsync(feedback);
         }

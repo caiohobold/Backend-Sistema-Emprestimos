@@ -16,9 +16,10 @@ namespace EmprestimosAPI.Repositories
             _context = context;
         }
 
-        public async Task<PagedList<PessoaReadDTO>> GetAllPessoasAsync(int pageNumber, int pageSize)
+        public async Task<PagedList<PessoaReadDTO>> GetAllPessoasAsync(int pageNumber, int pageSize, int idAssociacao)
         {
             var query = _context.Pessoas
+                .Where(p => p.IdAssociacao == idAssociacao)
                 .Select(p => new PessoaReadDTO
                 {
                     IdPessoa = p.IdPessoa,
@@ -28,6 +29,7 @@ namespace EmprestimosAPI.Repositories
                     Telefone = p.Telefone,
                     Descricao = p.Descricao,
                     Endereco = p.Endereco,
+                    idAssociacao = p.IdAssociacao,
                     StatusEmprestimo = _context.Emprestimos
                                        .Where(e => e.IdPessoa == p.IdPessoa)
                                        .OrderByDescending(e => e.Status == 0)
@@ -48,10 +50,10 @@ namespace EmprestimosAPI.Repositories
             return new PagedList<PessoaReadDTO>(items, count, pageNumber, pageSize);
         }
 
-        public async Task<PessoaReadDTO> GetPessoaByIdAsync(int id)
+        public async Task<PessoaReadDTO> GetPessoaByIdAsync(int id, int idAssociacao)
         {
             var pessoa = await _context.Pessoas
-                .Where(p => p.IdPessoa == id)
+                .Where(p => p.IdPessoa == id && p.IdAssociacao == idAssociacao)
                 .Select(p => new PessoaReadDTO
                 {
                     IdPessoa = p.IdPessoa,
@@ -61,6 +63,7 @@ namespace EmprestimosAPI.Repositories
                     Telefone = p.Telefone,
                     Descricao = p.Descricao,
                     Endereco = p.Endereco,
+                    idAssociacao = p.IdAssociacao,
                     StatusEmprestimo = _context.Emprestimos
                                .Where(e => e.IdPessoa == p.IdPessoa)
                                .OrderByDescending(e => e.Status == 0)
@@ -76,26 +79,39 @@ namespace EmprestimosAPI.Repositories
             return pessoa;
         }
 
-        public async Task<Pessoa> AddPessoaAsync(Pessoa pessoa)
+        public async Task<Pessoa> AddPessoaAsync(Pessoa pessoa, int idAssociacao)
         {
+            pessoa.IdAssociacao = idAssociacao;
             _context.Pessoas.Add(pessoa);
             await _context.SaveChangesAsync();
             return pessoa;
         }
 
-        public async Task UpdatePessoaAsync(Pessoa pessoa)
+        public async Task UpdatePessoaAsync(Pessoa pessoa, int idAssociacao)
         {
-            _context.Entry(pessoa).State = EntityState.Modified;
+            var existingPessoa = await _context.Pessoas
+                .Where(p => p.IdPessoa == pessoa.IdPessoa && p.IdAssociacao == idAssociacao)
+                .SingleOrDefaultAsync();
+
+            if (existingPessoa == null)
+            {
+                throw new KeyNotFoundException("Pessoa não encontrada ou não pertence à associação.");
+            }
+
+            _context.Entry(existingPessoa).CurrentValues.SetValues(pessoa);
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeletePessoaAsync(int id)
+        public async Task DeletePessoaAsync(int id, int idAssociacao)
         {
-            var pessoa = await _context.Pessoas.FindAsync(id);
-            if(pessoa == null)
+            var pessoa = await _context.Pessoas
+                .Where(p => p.IdPessoa == id && p.IdAssociacao == idAssociacao)
+                .SingleOrDefaultAsync();
+            if (pessoa == null)
             {
-                throw new KeyNotFoundException("Pessoa não encontrada.");
+                throw new KeyNotFoundException("Pessoa não encontrada ou não pertence à associação.");
             }
+
             var emprestimosAtivos = await _context.Emprestimos
                .Where(e => e.IdPessoa == id && e.Status == 0)
                .AnyAsync();

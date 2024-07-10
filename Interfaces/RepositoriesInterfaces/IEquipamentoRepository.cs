@@ -6,11 +6,11 @@ namespace EmprestimosAPI.Interfaces.RepositoriesInterfaces
 {
     public interface IEquipamentoRepository
     {
-        Task<PagedList<EquipamentoReadDTO>> GetAllEquip(int pageNumber, int pageSize);
-        Task<PagedList<Equipamento>> GetAllAvailableEquip(int pageNumber, int pageSize);
-        Task<Equipamento> GetEquipById(int id);
-        Task<Equipamento> AddEquip(Equipamento equipamento);
-        Task UpdateEquip(Equipamento equipamento);
-        Task DeleteEquip(int id);
+        Task<PagedList<EquipamentoReadDTO>> GetAllEquip(int pageNumber, int pageSize, int idAssociacao);
+        Task<PagedList<Equipamento>> GetAllAvailableEquip(int pageNumber, int pageSize, int idAssociacao);
+        Task<Equipamento> GetEquipById(int id, int idAssociacao);
+        Task<Equipamento> AddEquip(Equipamento equipamento, int idAssociacao);
+        Task UpdateEquip(Equipamento equipamento, int idAssociacao);
+        Task DeleteEquip(int id, int idAssociacao);
     }
 }

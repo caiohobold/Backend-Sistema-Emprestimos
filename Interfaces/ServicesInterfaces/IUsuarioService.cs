@@ -6,12 +6,12 @@ namespace EmprestimosAPI.Interfaces.Services
 {
     public interface IUsuarioService
     {
-        Task<IEnumerable<UsuarioReadDTO>> GetAllUsers(int pageNumber, int pageSize);
-        Task<UsuarioReadDTO> GetUserById(int id);
-        Task<UsuarioReadDTO> AddUser(UsuarioCreateDTO usuarioDTO);
-        Task UpdateUser(int id, UsuarioUpdateDTO usuarioDTO);
-        Task DeleteUser(int id);
-        Task ChangeUserPassword(int id, string newPassword);
+        Task<IEnumerable<UsuarioReadDTO>> GetAllUsers(int pageNumber, int pageSize, int idAssociacao);
+        Task<UsuarioReadDTO> GetUserById(int id, int idAssociacao);
+        Task<UsuarioReadDTO> AddUser(UsuarioCreateDTO usuarioDTO, int idAssociacao);
+        Task UpdateUser(int id, UsuarioUpdateDTO usuarioDTO, int idAssociacao);
+        Task DeleteUser(int id, int idAssociacao);
+        Task ChangeUserPassword(int id, string newPassword, int idAssociacao);
     }
 }
 

@@ -57,5 +57,12 @@ namespace EmprestimosAPI.Models
         [ForeignKey("IdLocal")]
         public Local Local { get; set; }
 
+        [Required]
+        [Column("idassociacao")]
+        public int IdAssociacao { get; set; }
+
+        [ForeignKey("IdAssociacao")]
+        public Associacao Associacao { get; set; }
+
     }
 }

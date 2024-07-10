@@ -6,10 +6,10 @@ namespace EmprestimosAPI.Interfaces.RepositoriesInterfaces
 {
     public interface IPessoaRepository
     {
-        Task<PagedList<PessoaReadDTO>> GetAllPessoasAsync(int pageNumber, int pageSize);
-        Task<PessoaReadDTO> GetPessoaByIdAsync(int id);
-        Task<Pessoa> AddPessoaAsync(Pessoa pessoa);
-        Task UpdatePessoaAsync(Pessoa pessoa);
-        Task DeletePessoaAsync(int id);
+        Task<PagedList<PessoaReadDTO>> GetAllPessoasAsync(int pageNumber, int pageSize, int idAssociacao);
+        Task<PessoaReadDTO> GetPessoaByIdAsync(int id, int idAssociacao);
+        Task<Pessoa> AddPessoaAsync(Pessoa pessoa, int idAssociacao);
+        Task UpdatePessoaAsync(Pessoa pessoa, int idAssociacao);
+        Task DeletePessoaAsync(int id, int idAssociacao);
     }
 }

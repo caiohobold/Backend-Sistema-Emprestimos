@@ -43,5 +43,12 @@ namespace EmprestimosAPI.Models
         [Column("data_devolucao_emprestimo")]
         [DataType(DataType.Date)]
         public DateTime DataDevolucaoEmprestimo { get; set; }
+
+        [Required]
+        [Column("idassociacao")]
+        public int IdAssociacao { get; set; }
+
+        [ForeignKey("IdAssociacao")]
+        public Associacao Associacao { get; set; }
     }
 }
