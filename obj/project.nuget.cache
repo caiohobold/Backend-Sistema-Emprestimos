@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "b6DVQDi2DNcrFO4DMAJG8McZ4tShu8E8W4DJtuVTWmtRCyi/ruV/tE970jnPTOdOFyJz+yLamL66dGbpe0YNKA==",
+  "dgSpecHash": "cJ+LG1hPQj1mDkd8HhQdDhQesmXdeDolbbTlwe9JH6LRr7VXQ4Evp9sQk0cwa1sCTNks/VjDMyRpKZk5PPshcA==",
   "success": true,
   "projectFilePath": "C:\\Users\\caioh\\source\\repos\\EmprestimosAPI\\EmprestimosAPI\\EmprestimosAPI.csproj",
   "expectedPackageFiles": [
@@ -36,6 +36,7 @@
     "C:\\Users\\caioh\\.nuget\\packages\\microsoft.identitymodel.protocols.openidconnect\\7.1.2\\microsoft.identitymodel.protocols.openidconnect.7.1.2.nupkg.sha512",
     "C:\\Users\\caioh\\.nuget\\packages\\microsoft.identitymodel.tokens\\7.1.2\\microsoft.identitymodel.tokens.7.1.2.nupkg.sha512",
     "C:\\Users\\caioh\\.nuget\\packages\\microsoft.openapi\\1.6.14\\microsoft.openapi.1.6.14.nupkg.sha512",
+    "C:\\Users\\caioh\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.19.6\\microsoft.visualstudio.azure.containers.tools.targets.1.19.6.nupkg.sha512",
     "C:\\Users\\caioh\\.nuget\\packages\\mono.texttemplating\\2.2.1\\mono.texttemplating.2.2.1.nupkg.sha512",
     "C:\\Users\\caioh\\.nuget\\packages\\npgsql\\8.0.3\\npgsql.8.0.3.nupkg.sha512",
     "C:\\Users\\caioh\\.nuget\\packages\\npgsql.entityframeworkcore.postgresql\\8.0.4\\npgsql.entityframeworkcore.postgresql.8.0.4.nupkg.sha512",
