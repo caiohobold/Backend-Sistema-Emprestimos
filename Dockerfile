@@ -22,6 +22,12 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
+# Instalar o dotnet-ef globalmente
+RUN dotnet tool install --global dotnet-ef
+
+# Adicionar .dotnet/tools ao PATH
+ENV PATH="$PATH:/root/.dotnet/tools"
+
 # Criar e configurar o entrypoint.sh diretamente no Dockerfile
 RUN echo '#!/bin/bash' > entrypoint.sh
 RUN echo 'set -e' >> entrypoint.sh
