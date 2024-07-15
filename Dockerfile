@@ -3,7 +3,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 # Instalar o dotnet-ef globalmente durante a fase de build
-RUN dotnet tool install --global dotnet-ef
+RUN dotnet tool install --global dotnet-ef --version 8.0
 
 # Adicionar .dotnet/tools ao PATH
 ENV PATH="$PATH:/root/.dotnet/tools"
