@@ -19,8 +19,8 @@ RUN dotnet build "EmprestimosAPI.csproj" -c Release -o /app/build
 # Publicar a aplicação
 RUN dotnet publish "EmprestimosAPI.csproj" -c Release -o /app/publish
 
-# Usar a imagem ASP.NET Core Runtime para a etapa final
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+# Usar a imagem SDK para a etapa final
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/publish .
 
