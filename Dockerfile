@@ -3,7 +3,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
 # Copiar e restaurar dependências
-COPY ["EmprestimosAPI.csproj", "."]
+COPY EmprestimosAPI.csproj .
 RUN dotnet restore "EmprestimosAPI.csproj"
 
 # Copiar o restante do código e construir
@@ -27,7 +27,7 @@ ENV PATH="$PATH:/root/.dotnet/tools"
 # Criar e configurar o entrypoint.sh diretamente no Dockerfile
 RUN echo '#!/bin/bash' > entrypoint.sh
 RUN echo 'set -e' >> entrypoint.sh
-RUN echo 'cd /app' >> entrypoint.sh
+RUN echo 'cd /app' >> entrypoint.sh 
 RUN echo 'dotnet ef database update --project EmprestimosAPI.csproj' >> entrypoint.sh
 RUN echo 'dotnet EmprestimosAPI.dll' >> entrypoint.sh
 RUN chmod +x entrypoint.sh
