@@ -34,7 +34,7 @@ ENV PATH="$PATH:/root/.dotnet/tools"
 RUN echo '#!/bin/bash' > entrypoint.sh
 RUN echo 'set -e' >> entrypoint.sh
 RUN echo 'cd /app' >> entrypoint.sh
-RUN echo 'dotnet-ef database update --project /app/EmprestimosAPI.csproj' >> entrypoint.sh
+RUN echo 'dotnet-ef database update --project EmprestimosAPI.csproj' >> entrypoint.sh
 RUN echo 'dotnet EmprestimosAPI.dll' >> entrypoint.sh
 RUN chmod +x entrypoint.sh
 
