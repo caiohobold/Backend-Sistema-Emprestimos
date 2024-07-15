@@ -1,9 +1,9 @@
-# Usar a imagem SDK para construção
+# Usar a imagem SDK para construção e publicação
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
+WORKDIR /app
 
 # Instalar o dotnet-ef globalmente durante a fase de build
-RUN dotnet tool install --global dotnet-ef --version 8.0
+RUN dotnet tool install --global dotnet-ef
 
 # Adicionar .dotnet/tools ao PATH
 ENV PATH="$PATH:/root/.dotnet/tools"
@@ -20,7 +20,7 @@ RUN dotnet build "EmprestimosAPI.csproj" -c Release -o /app/build
 RUN dotnet publish "EmprestimosAPI.csproj" -c Release -o /app/publish
 
 # Usar a imagem ASP.NET Core Runtime para a etapa final
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/publish .
 
@@ -34,7 +34,7 @@ ENV PATH="$PATH:/root/.dotnet/tools"
 RUN echo '#!/bin/bash' > entrypoint.sh
 RUN echo 'set -e' >> entrypoint.sh
 RUN echo 'cd /app' >> entrypoint.sh
-RUN echo 'dotnet ef database update --project /src/EmprestimosAPI.csproj' >> entrypoint.sh
+RUN echo 'dotnet-ef database update --project /app/EmprestimosAPI.csproj' >> entrypoint.sh
 RUN echo 'dotnet EmprestimosAPI.dll' >> entrypoint.sh
 RUN chmod +x entrypoint.sh
 
